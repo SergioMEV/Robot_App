@@ -7,8 +7,13 @@
 #    http://shiny.rstudio.com/
 #
 
+# Libraries
 library(shiny)
 library(shinythemes)
+library(readxl)
+
+# Data
+robot_data <- read_excel("data/Round2ProjectRobotData.xlsx")
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
@@ -25,6 +30,21 @@ ui <- navbarPage(
     ## Compare Panel
     tabPanel(
         "Compare", # Title
+        ## Layout
+        fluidRow(
+            ## Country 1 Column
+            column(6, ## Column Size 
+                   selectInput("category1", label = h3("Select Category 1"), 
+                               choices = robot_data$CATEGORY, 
+                               selected = 1),
+            ),
+            ## Country 2 Column
+            column(6, ## Column Size
+                   selectInput("category2", label = h3("Select Category 2"), 
+                               choices = robot_data$CATEGORY, 
+                               selected = 1),
+            )
+        )
     ),
     
     ## About Section
@@ -62,14 +82,7 @@ ui <- navbarPage(
 # Define server logic required to draw a histogram  
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+    
 }
 
 # Run the application 
