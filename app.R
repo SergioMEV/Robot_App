@@ -27,6 +27,11 @@ ui <- navbarPage(
         "Compare", # Title
     ),
     
+    ## Robot Panel
+    tabPanel(
+        "Robot", # Title
+    ),
+    
     ## About Section
     navbarMenu(
         "About", #Title
