@@ -34,6 +34,11 @@ ui <- navbarPage(
         ## Purpose Panel
         tabPanel(
             "Purpose", # Title
+            mainPanel(
+                h1("Robots in response to COVID-19"),
+                p(" "),
+            ),
+            
         ),
         
         ## Takeaways Panel
@@ -54,6 +59,11 @@ ui <- navbarPage(
         ## Acknowledgements
         tabPanel(
             "Acknowledgements", # Title
+            mainPanel(
+            p("Professor Fernanda Eliott"),
+            p("Class Mentor: Alex Leach"),
+            )
+            
         )
         
     )
