@@ -9,9 +9,12 @@
 
 # Libraries
 library(shiny)
+library(shinyWidgets)
 library(shinythemes)
+library(eply)
 library(readxl)
-
+library(htmltools)  
+library(wordcloud2)
 # Data
 robot_data <- read_excel("data/Round2ProjectRobotData.xlsx")
 
@@ -34,15 +37,69 @@ ui <- navbarPage(
         fluidRow(
             ## Country 1 Column
             column(6, ## Column Size 
+                   ## Select box
                    selectInput("category1", label = h3("Select Category 1"), 
-                               choices = robot_data$CATEGORY, 
-                               selected = 1),
+                               choices = robot_data$CATEGORY,
+                               selected = 1,
+                               width = '100%'),
+                   ## Potential button
+                   radioGroupButtons(
+                       inputId = "chartType1", label = "Choose a graph:", 
+                       choices = c("Subcategories" = "Subcategory", 
+                                   "Locations" = "Location", 
+                                   "Name" = "Name"),
+                       justified = TRUE),
+                   ## Image 
+                   conditionalPanel(
+                       condition = "input.chartType1 == 'Subcategory'",
+                       plotOutput("waffle1")
+                   ),
+                   conditionalPanel(
+                       condition = "input.chartType1 == 'Location'",
+                       plotOutput("compBarChart1")
+                   ),
+                   conditionalPanel(
+                       condition = "input.chartType1 == 'Name'",
+                       wordcloud2Output("wordCloud1")
+                   )
+
             ),
             ## Country 2 Column
             column(6, ## Column Size
+                   
+                   ## Select box
                    selectInput("category2", label = h3("Select Category 2"), 
                                choices = robot_data$CATEGORY, 
-                               selected = 1),
+                               selected = 1,
+                               width = '100%'),
+                   
+                   ## Potential button
+                   radioGroupButtons(
+                       inputId = "chartType2", label = "Choose a graph:", 
+                       choices = c("Subcategories" = "Subcategory", 
+                                   "Locations" = "Location", 
+                                   "Name" = "Name"),
+                       justified = TRUE),
+                   ## Plot rendering
+                   
+                   ### Waffle Chart
+                   conditionalPanel(
+                       condition = "input.chartType2 == 'Subcategory'",
+                       plotOutput("waffle2")
+                   ),
+                   
+                   ### Bar Chart
+                   conditionalPanel(
+                       condition = "input.chartType2 == 'Location'",
+                       plotOutput("compBarChart2")
+                   ),
+                   
+                   ### Word Cloud 
+                   conditionalPanel(
+                       condition = "input.chartType2 == 'Name'",
+                       wordcloud2Output("wordCloud2")
+                   )
+                   
             )
         )
     ),
@@ -92,7 +149,131 @@ ui <- navbarPage(
 # Define server logic required to draw a histogram  
 server <- function(input, output) {
 
+    # Graphs for Category Comparisons
     
+    ## Bar Chart Category 1
+    output$compBarChart1 <- renderPlot({
+        
+        ### Filtering dataset by given category
+        cat1 <- input$category1 
+        
+        temp_data <- robot_data %>% 
+            filter(CATEGORY == cat1)
+        
+        ### Choosing variable to graph depending on input
+        type1 <- temp_data$LOCATION
+        
+        ### Plotting Graph
+        ggplot(temp_data, 
+               aes(x = type1)) +
+            geom_bar(fill = "darkblue") +
+            coord_flip() + 
+            labs(y = "Number of Robots",
+                 x = "Country")
+        
+    })
+    
+    ## Bar Chart Category 2
+    output$compBarChart2 <- renderPlot({
+        
+        ### Filtering dataset by given category
+        cat2 <- input$category2
+        
+        temp_data <- robot_data %>% 
+            filter(CATEGORY == cat2)
+        
+        ### Choosing variable to graph depending on input
+        type2 <- temp_data$LOCATION
+        
+        ### Plotting Graph
+        ggplot(temp_data, 
+               aes(x = type2)) +
+            geom_bar(fill = "darkblue") +
+            coord_flip() + 
+            labs(y = "Number of Robots",
+                 x = "Country")
+    
+    })
+    
+    ## Word Clouds
+    
+    output$wordCloud1 <- renderWordcloud2({
+        
+        ## Filtering dataset
+        cat1 <- input$category1
+        
+        temp_data <- robot_data %>% 
+            filter(CATEGORY == cat1) %>% 
+            select(NAME) %>% 
+            count(NAME)
+        
+        ## Creating word cloud
+        
+        wordcloud2(temp_data, 
+                  size = 1, 
+                  color = 'random-dark')
+
+    })
+    
+    output$wordCloud2 <- renderWordcloud2({
+        
+        ## Filtering dataset
+        cat2 <- input$category2
+        
+        temp_data <- robot_data %>% 
+            filter(CATEGORY == cat2) %>% 
+            select(NAME) %>% 
+            count(NAME)
+        
+        ## Creating word cloud
+        
+        wordcloud2(temp_data, 
+                  size = 1, 
+                  color = 'random-dark')
+        
+    })
+    
+    ## Waffle graphs
+    
+    output$waffle1 <- renderPlot({
+        
+        ### Filtering dataset and creating a percent variable for chart
+        cat1 <- input$category1
+        
+        temp_data <- robot_data %>%  
+            filter(CATEGORY == cat1) %>%
+            group_by(SUBCATEGORY) %>% 
+            summarise(n = n()) %>% 
+            mutate(percent = round(n/sum(n)*100)) %>% 
+            arrange(percent, desc())
+        
+        ### Creating vector variable for plotting
+        subcat_count <- temp_data$percent
+        names(subcat_count) <- temp_data$SUBCATEGORY
+        
+        ### Plotting waffle chart
+        waffle(subcat_count, 
+               reverse = TRUE)
+    })
+    
+    
+    output$waffle2 <- renderPlot({
+        
+        cat2 <- input$category2
+        
+        temp_data <- robot_data %>%  
+            filter(CATEGORY == cat2) %>%
+            group_by(SUBCATEGORY) %>% 
+            summarise(n = n()) %>% 
+            mutate(percent = round(n/sum(n)*100)) %>% 
+            arrange(percent, desc())
+        
+        subcat_count <- temp_data$percent
+        names(subcat_count) <- temp_data$SUBCATEGORY
+        
+        
+        waffle(subcat_count, reverse = TRUE)
+    })
 }
 
 # Run the application 
