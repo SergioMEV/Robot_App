@@ -16,7 +16,8 @@ library(readxl)
 library(htmltools)  
 library(wordcloud2)
 # Data
-robot_data <- read_excel("data/Round2ProjectRobotData.xlsx")
+robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>% 
+    filter(!is.na(CATEGORY))
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
