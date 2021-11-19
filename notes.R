@@ -19,3 +19,7 @@ names(subcat_count) <- temp_data$SUBCATEGORY
 
 waffle(subcat_count, reverse = TRUE)
 
+
+temp_data1 <- robot_data %>% 
+  count(LOCATION) %>% 
+  arrange(desc(n))

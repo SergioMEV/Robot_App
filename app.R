@@ -7,6 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 
+
 # Libraries
 library(shiny)
 library(shinyWidgets)
@@ -15,6 +16,8 @@ library(eply)
 library(readxl)
 library(htmltools)  
 library(wordcloud2)
+
+
 # Data
 robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>% 
     filter(!is.na(CATEGORY))
@@ -32,76 +35,86 @@ ui <- navbarPage(
     ),
     
     ## Compare Panel
-    tabPanel(
-        "Compare", # Title
-        ## Layout
-        fluidRow(
-            ## Country 1 Column
-            column(6, ## Column Size 
-                   ## Select box
-                   selectInput("category1", label = h3("Select Category 1"), 
-                               choices = robot_data$CATEGORY,
-                               selected = 1,
-                               width = '100%'),
-                   ## Potential button
-                   radioGroupButtons(
-                       inputId = "chartType1", label = "Choose a graph:", 
-                       choices = c("Subcategories" = "Subcategory", 
-                                   "Locations" = "Location", 
-                                   "Name" = "Name"),
-                       justified = TRUE),
-                   ## Image 
-                   conditionalPanel(
-                       condition = "input.chartType1 == 'Subcategory'",
-                       plotOutput("waffle1")
-                   ),
-                   conditionalPanel(
-                       condition = "input.chartType1 == 'Location'",
-                       plotOutput("compBarChart1")
-                   ),
-                   conditionalPanel(
-                       condition = "input.chartType1 == 'Name'",
-                       wordcloud2Output("wordCloud1")
-                   )
-
-            ),
-            ## Country 2 Column
-            column(6, ## Column Size
-                   
-                   ## Select box
-                   selectInput("category2", label = h3("Select Category 2"), 
-                               choices = robot_data$CATEGORY, 
-                               selected = 1,
-                               width = '100%'),
-                   
-                   ## Potential button
-                   radioGroupButtons(
-                       inputId = "chartType2", label = "Choose a graph:", 
-                       choices = c("Subcategories" = "Subcategory", 
-                                   "Locations" = "Location", 
-                                   "Name" = "Name"),
-                       justified = TRUE),
-                   ## Plot rendering
-                   
-                   ### Waffle Chart
-                   conditionalPanel(
-                       condition = "input.chartType2 == 'Subcategory'",
-                       plotOutput("waffle2")
-                   ),
-                   
-                   ### Bar Chart
-                   conditionalPanel(
-                       condition = "input.chartType2 == 'Location'",
-                       plotOutput("compBarChart2")
-                   ),
-                   
-                   ### Word Cloud 
-                   conditionalPanel(
-                       condition = "input.chartType2 == 'Name'",
-                       wordcloud2Output("wordCloud2")
-                   )
-                   
+    navbarMenu(
+        "Compare",
+        
+        ## Robot panel
+        tabPanel(
+            "Robots", # Title
+            ## Layout
+            fluidRow(
+                ## Country 1 Column
+                column(6, ## Column Size 
+                       ## Select box
+                       selectInput("category1", label = h3("Select Category 1"), 
+                                   choices = robot_data$CATEGORY,
+                                   selected = 1,
+                                   width = '100%'),
+                       ## Potential button
+                       radioGroupButtons(
+                           inputId = "chartType1", label = "Choose a graph:", 
+                           choices = c("Subcategories" = "Subcategory", 
+                                       "Locations" = "Location", 
+                                       "Name" = "Name"),
+                           justified = TRUE),
+                       ## Image 
+                       conditionalPanel(
+                           condition = "input.chartType1 == 'Subcategory'",
+                           plotOutput("waffle1")
+                       ),
+                       conditionalPanel(
+                           condition = "input.chartType1 == 'Location'",
+                           plotOutput("compBarChart1")
+                       ),
+                       conditionalPanel(
+                           condition = "input.chartType1 == 'Name'",
+                           wordcloud2Output("wordCloud1")
+                       )
+                       
+                ),
+                ## Country 2 Column
+                column(6, ## Column Size
+                       
+                       ## Select box
+                       selectInput("category2", label = h3("Select Category 2"), 
+                                   choices = robot_data$CATEGORY, 
+                                   selected = 1,
+                                   width = '100%'),
+                       
+                       ## Potential button
+                       radioGroupButtons(
+                           inputId = "chartType2", label = "Choose a graph:", 
+                           choices = c("Subcategories" = "Subcategory", 
+                                       "Locations" = "Location", 
+                                       "Name" = "Name"),
+                           justified = TRUE),
+                       ## Plot rendering
+                       
+                       ### Waffle Chart
+                       conditionalPanel(
+                           condition = "input.chartType2 == 'Subcategory'",
+                           plotOutput("waffle2")
+                       ),
+                       
+                       ### Bar Chart
+                       conditionalPanel(
+                           condition = "input.chartType2 == 'Location'",
+                           plotOutput("compBarChart2")
+                       ),
+                       
+                       ### Word Cloud 
+                       conditionalPanel(
+                           condition = "input.chartType2 == 'Name'",
+                           wordcloud2Output("wordCloud2")
+                       )
+                       
+                )
             )
+        ), ## End of robot panel
+        
+        ## Countries Panel
+        tabPanel(
+            "Countries" # Title
         )
     ),
     
@@ -159,18 +172,22 @@ server <- function(input, output) {
         cat1 <- input$category1 
         
         temp_data <- robot_data %>% 
-            filter(CATEGORY == cat1)
+            filter(CATEGORY == cat1) %>% 
+            count(LOCATION) %>% 
+            arrange(desc(n))
         
         ### Choosing variable to graph depending on input
         type1 <- temp_data$LOCATION
         
         ### Plotting Graph
         ggplot(temp_data, 
-               aes(x = type1)) +
-            geom_bar(fill = "darkblue") +
+               aes(x = reorder(type1,n), y = n)) +
+            geom_col(fill = "darkblue") +
             coord_flip() + 
-            labs(y = "Number of Robots",
-                 x = "Country")
+            labs(title = paste(input$category1, "Robots by Country"),
+                 y = "Number of Robots",
+                 x = "Country") +
+            theme_classic()
         
     })
     
@@ -181,18 +198,22 @@ server <- function(input, output) {
         cat2 <- input$category2
         
         temp_data <- robot_data %>% 
-            filter(CATEGORY == cat2)
+            filter(CATEGORY == cat2) %>% 
+            count(LOCATION) %>% 
+            arrange(desc(n))
         
         ### Choosing variable to graph depending on input
         type2 <- temp_data$LOCATION
         
         ### Plotting Graph
         ggplot(temp_data, 
-               aes(x = type2)) +
-            geom_bar(fill = "darkblue") +
+               aes(x = reorder(type2, n), y = n)) +
+            geom_col(fill = "darkblue") +
             coord_flip() + 
-            labs(y = "Number of Robots",
-                 x = "Country")
+            labs(title = paste(input$category2, "Robots by Country"),
+                 y = "Number of Robots",
+                 x = "Country") +
+            theme_classic()
     
     })
     
