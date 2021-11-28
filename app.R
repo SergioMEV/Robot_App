@@ -10,13 +10,14 @@
 
 # Libraries
 library(shiny)
+library(dplyr)
 library(shinyWidgets)
 library(shinythemes)
 library(eply)
 library(readxl)
 library(htmltools)  
 library(wordcloud2)
-
+library(waffle)
 
 # Data
 robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>% 
@@ -50,7 +51,7 @@ ui <- navbarPage(
                                    choices = robot_data$CATEGORY,
                                    selected = 1,
                                    width = '100%'),
-                       ## Potential button
+                       ## Radio buttons
                        radioGroupButtons(
                            inputId = "chartType1", label = "Choose a graph:", 
                            choices = c("Subcategories" = "Subcategory", 
@@ -81,7 +82,7 @@ ui <- navbarPage(
                                    selected = 1,
                                    width = '100%'),
                        
-                       ## Potential button
+                       ## Radio buttons
                        radioGroupButtons(
                            inputId = "chartType2", label = "Choose a graph:", 
                            choices = c("Subcategories" = "Subcategory", 
@@ -225,7 +226,8 @@ server <- function(input, output) {
         cat1 <- input$category1
         
         temp_data <- robot_data %>% 
-            filter(CATEGORY == cat1) %>% 
+            filter(CATEGORY == cat1,
+                   !(NAME %in% c("not sure", "unspecified", "Unspecified", "Not sure"))) %>% 
             select(NAME) %>% 
             count(NAME)
         
@@ -243,7 +245,8 @@ server <- function(input, output) {
         cat2 <- input$category2
         
         temp_data <- robot_data %>% 
-            filter(CATEGORY == cat2) %>% 
+            filter(CATEGORY == cat2,
+                   !(NAME %in% c("not sure", "unspecified", "Unspecified", "Not sure"))) %>% 
             select(NAME) %>% 
             count(NAME)
         
@@ -258,6 +261,10 @@ server <- function(input, output) {
     ## Waffle graphs
     
     output$waffle1 <- renderPlot({
+        ## Color Palette
+        
+        pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
+                 "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
         
         ### Filtering dataset and creating a percent variable for chart
         cat1 <- input$category1
@@ -271,16 +278,25 @@ server <- function(input, output) {
         
         ### Creating vector variable for plotting
         subcat_count <- temp_data$percent
-        names(subcat_count) <- temp_data$SUBCATEGORY
+        names(subcat_count) <-  paste(temp_data$SUBCATEGORY, "(", temp_data$n, "robots)")
         
         ### Plotting waffle chart
         waffle(subcat_count, 
-               reverse = TRUE)
+               reverse = TRUE,
+               color = pal,
+               xlab = "1 square = 1% of total Robots",
+               title = paste("Division of", cat1, "Robots"))
     })
     
     
     output$waffle2 <- renderPlot({
         
+        ## Color Palette
+        
+        pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
+                 "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+        
+        ## Filtering dataset by category
         cat2 <- input$category2
         
         temp_data <- robot_data %>%  
@@ -290,11 +306,17 @@ server <- function(input, output) {
             mutate(percent = round(n/sum(n)*100)) %>% 
             arrange(percent, desc())
         
+        ## Creating vector variable for plotting
         subcat_count <- temp_data$percent
-        names(subcat_count) <- temp_data$SUBCATEGORY
+        names(subcat_count) <- paste(temp_data$SUBCATEGORY, "(", temp_data$n, "robots)")
         
         
-        waffle(subcat_count, reverse = TRUE)
+        ## Plotting waffle chart
+        waffle(subcat_count,
+               reverse = TRUE,
+               color = pal,
+               xlab = "1 square = 1% of total Robots",
+               title = paste("Division of", cat2, "Robots"))
     })
 }
 
