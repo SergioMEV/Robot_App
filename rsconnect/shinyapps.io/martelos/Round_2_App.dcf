@@ -1,0 +1,14 @@
+name: Round_2_App
+title: Round_2_App
+username:
+account: martelos
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5171761
+bundleId: 5306631
+url: https://martelos.shinyapps.io/Round_2_App/
+when: 1638214322.48147
+lastSyncTime: 1638214322.48147
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .gitattributes|data/~$Round2ProjectRobotData.xlsx|draft.R|MapExample/Shiny_Project_Sergio_Martelo.zip

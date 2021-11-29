@@ -10,7 +10,7 @@
 
 # Libraries
 library(shiny)
-library(dplyr)
+library(tidyverse)
 library(shinyWidgets)
 library(shinythemes)
 library(eply)
@@ -21,7 +21,7 @@ library(waffle)
 library(fmsb)
 
 # Data
-robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>% 
+robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 3) %>% 
     filter(!is.na(CATEGORY))
 
 # Define UI for application that draws a histogram
@@ -116,32 +116,83 @@ ui <- navbarPage(
         
         ## Countries Panel
         tabPanel(
-            "Countries", # Title
+            "Regions", # Title
             fluidPage(
-                fluidRow(
-                    column(
-                        9,
-                        p("whatever")
+                column(
+                        8,
+                        wellPanel(
+                            style = "background-color: #fff; 
+                                    border-color: #2c3e50; 
+                                    height: 450px;
+                                    border-width: 2px",
+                            # conditional panels for rendering plots
+                            conditionalPanel(
+                                condition = "input.regionChart == 'Total'",
+                                plotOutput("totalbar")
+                            ),
+                            conditionalPanel(
+                                condition = "input.regionChart == 'Categories'",
+                                plotOutput("spider")
+                            ),
+                            conditionalPanel(
+                                condition = "input.regionChart == 'Types'",
+                                plotOutput("typebar")
+                            )
+                                  
+                                      
+                                 
+                                  
+                        )
                     ),
-                    column(
-                        3,
-                        # Region Select
-                        pickerInput(
-                            inputId = "regions",
-                            label = "Region(s)", 
-                            choices = LETTERS,
-                            options = list(
-                                `actions-box` = TRUE), 
-                            multiple = TRUE),
+                column(
+                        4,
+                        wellPanel(
+                            style = "background-color: #fff; 
+                                    border-color: #2c3e50; 
+                                    height: 300px;
+                                    border-width: 2px",
+                            # Region Select
+                            pickerInput(
+                                "regions",
+                                label = "Region(s)", 
+                                choices = distinct(robot_data, Region),
+                                multiple = TRUE,
+                                options = list(
+                                    "max-options" = 2,
+                                    "max-options-text" = "Select Only 2 Regions"
+                                )),
+                            # Type of graph
+                            radioGroupButtons(
+                                "regionChart",
+                                label = "Label",
+                                choices = c("Total",
+                                            "Categories", 
+                                            "Types"),
+                                selected = 1,
+                                direction = "vertical",
+                                justified = TRUE
+                            )
+                        ),
                         
-                        
-                        
+                        conditionalPanel(
+                            condition = "input.regionChart == 'Categories'",
+                            wellPanel(
+                                style = "background-color: #fff; 
+                                         border-color: #2c3e50; 
+                                         height: 120px;
+                                         border-width: 2px",
+                            # Category
+                                pickerInput(
+                                    inputId = "category",
+                                    label = "Category", 
+                                    choices = distinct(robot_data, CATEGORY),
+                                    selected = 1)
+                            )
+                        )
                     )
                 )
-            )
-            
-        )
-    ),
+            ) # End of compare countries tab
+        ),
     
     ## About Section
     navbarMenu(
@@ -344,6 +395,105 @@ server <- function(input, output) {
                color = pal,
                xlab = "1 square = 1% of total Robots",
                title = paste("Division of", cat2, "Robots"))
+    })
+    
+    # Comparing Countries charts
+    
+    ## Spider Chart
+    
+    output$spider <- renderPlot({
+        
+        # Colors
+        
+        pal  <- c(rgb(0.2,0.7,0.2,0.2), rgb(0.2,0.2,0.7,0.2))
+        
+        ## Filtering dataset
+        temp_data <- robot_data %>%
+            group_by(Region) %>%
+            filter(CATEGORY == input$category,
+                   Region %in% c(input$regions[1], input$regions[2])) %>%
+            count(SUBCATEGORY) %>%
+            arrange(desc(n))%>%
+            pivot_wider(names_from = SUBCATEGORY, values_from = n)
+        
+        
+        ## Making new dataset for plotting
+        
+        temp_data2 <- temp_data[2:ncol(temp_data)] 
+        
+        temp_data2[is.na(temp_data2)] <- 0
+        
+        rownames(temp_data2) <- temp_data$Region
+        
+        temp_data2 <- rbind(rep(20,5), rep(0,5), temp_data2)
+        
+        ## Plotting
+        
+        radarchart(temp_data2,
+                   axistype=1 , 
+                   #custom polygon
+                   pcol= pal , pfcol= pal , plwd=4 , plty=1,
+                   #custom the grid
+                   cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,50,5), cglwd=0.8,
+                   #custom labels
+                   vlcex=0.6
+        )
+        
+        # Add a legend
+        legend(x=1, y=0.5, 
+               legend = rownames(temp_data2)[3:4],
+               bty = "n", pch=20 , col= pal , 
+               text.col = "grey", cex=1.2, pt.cex=3)
+    })
+    
+    ## type bar chart 
+    
+    output$typebar <- renderPlot({
+        
+        ## Filtering dataset
+        temp_data <- robot_data %>%
+            group_by(Region) %>%
+            filter(Region %in% input$regions) %>% 
+            count(TYPE)
+        
+        ## Plotting barchart
+        ggplot(temp_data, aes(x = TYPE,
+                              y = n,
+                              fill = Region)) +
+            geom_bar(position="dodge", stat="identity") +
+            labs(x = "Robot Type",
+                 y = "Number of Robots",
+                 title = paste("Robot Type Distribution in",
+                               input$regions[1], "and", 
+                               input$regions[2])) + 
+            theme_classic()
+        
+    })
+    
+    
+    ## total bar chart 
+    
+    output$totalbar <- renderPlot({
+        
+        ## Filtering dataset
+        temp_data <- robot_data %>%
+            group_by(Region) %>%
+            filter(Region %in% input$regions) %>% 
+            count(Region)
+        
+        ## Plotting barchart
+        ggplot(temp_data, aes(x = Region,
+                              y = n,
+                              fill = Region)) +
+            geom_col() +
+            labs(x = "Region",
+                 y = "Number of Robots",
+                 title = paste("Number of Robots in",
+                               input$regions[1], "and", 
+                               input$regions[2])) + 
+            coord_flip() +
+            theme_classic()
+        
     })
 }
 

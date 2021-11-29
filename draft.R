@@ -1,30 +1,21 @@
 library(fmsb)
+library(readxl)
 library(tidyverse)
 
-robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>%
+robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 3) %>%
   filter(!is.na(CATEGORY))
 
-head(robot_data)
-
 temp_data <- robot_data %>%
-  group_by(Region) %>% 
-  filter(CATEGORY == "Public Safety", 
-         Region == "1",
-         Region == "2") %>%
-  count(SUBCATEGORY) %>% 
-  arrange(desc(n))%>%
-  pivot_wider(names_from = SUBCATEGORY, values_from = n) 
+  group_by(Region) %>%
+  filter(Region %in% c("North America", "Asia" )) %>% 
+  count(TYPE)
 
-temp_data <- rbind(rep(temp_data[[1]],5) , rep(0,5), temp_data)
-
-
-radarchart(temp_data,
-           axistype=1 , 
-            #custom polygon
-           pcol=rgb(0.2,0.5,0.5,0.9) , pfcol=rgb(0.2,0.5,0.5,0.5) , plwd=4 , 
-           #custom the grid
-           cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,20,5), cglwd=0.8,
-           #custom labels
-           vlcex=0.8 
-)
-
+ggplot(temp_data, aes(x = TYPE,
+                      y = n,
+                      fill = Region)) +
+  geom_bar(position="dodge", stat="identity") +
+  labs(x = "Robot Type",
+       y = "Number of Robots",
+       title = paste("Robot Type Distribution in",
+                     input$regions[1], "and", 
+                     input$regions[2]))
