@@ -287,8 +287,11 @@ server <- function(input, output) {
     output$waffle1 <- renderPlot({
         ## Color Palette
         
-        pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
-                 "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+        #pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
+        #         "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+        
+        pal <- c("#bec2cb", "#ffd700", "#e8d8cd", "#3c3b6e", "#ef4135",
+                 "#ff7912", "#00923f", "#0055a4", "#ef4135", "#fbbf16")
         
         ### Filtering dataset and creating a percent variable for chart
         cat1 <- input$category1
