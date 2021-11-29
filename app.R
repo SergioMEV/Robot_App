@@ -44,7 +44,7 @@ ui <- navbarPage(
         tabPanel(
             "Robots", # Title
             ## Layout
-            fluidRow(
+            fluidPage(
                 ## Country 1 Column
                 column(6, ## Column Size 
                        ## Select box
@@ -117,6 +117,28 @@ ui <- navbarPage(
         ## Countries Panel
         tabPanel(
             "Countries", # Title
+            fluidPage(
+                fluidRow(
+                    column(
+                        9,
+                        p("whatever")
+                    ),
+                    column(
+                        3,
+                        # Region Select
+                        pickerInput(
+                            inputId = "regions",
+                            label = "Region(s)", 
+                            choices = LETTERS,
+                            options = list(
+                                `actions-box` = TRUE), 
+                            multiple = TRUE),
+                        
+                        
+                        
+                    )
+                )
+            )
             
         )
     ),

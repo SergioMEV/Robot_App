@@ -7,13 +7,13 @@ robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>%
 head(robot_data)
 
 temp_data <- robot_data %>%
-  group_by(LOCATION) %>% 
-  filter(CATEGORY == "Public Safety") %>%
+  group_by(Region) %>% 
+  filter(CATEGORY == "Public Safety", 
+         Region == "1",
+         Region == "2") %>%
   count(SUBCATEGORY) %>% 
   arrange(desc(n))%>%
   pivot_wider(names_from = SUBCATEGORY, values_from = n) 
-
-rownames(temp_data) <- ()
 
 temp_data <- rbind(rep(temp_data[[1]],5) , rep(0,5), temp_data)
 
