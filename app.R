@@ -18,6 +18,7 @@ library(readxl)
 library(htmltools)  
 library(wordcloud2)
 library(waffle)
+library(fmsb)
 
 # Data
 robot_data <- read_excel("data/Round2ProjectRobotData.xlsx") %>% 
@@ -115,7 +116,8 @@ ui <- navbarPage(
         
         ## Countries Panel
         tabPanel(
-            "Countries" # Title
+            "Countries", # Title
+            
         )
     ),
     
