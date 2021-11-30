@@ -19,6 +19,7 @@ library(htmltools)
 library(wordcloud2)
 library(waffle)
 library(fmsb)
+library(slickR)
 
 # Data
 robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 3) %>% 
@@ -45,13 +46,19 @@ ui <- navbarPage(
             "Robots", # Title
             ## Layout
             fluidPage(
-                ## Country 1 Column
-                column(6, ## Column Size 
-                       ## Select box
-                       selectInput("category1", label = h3("Select Category 1"), 
-                                   choices = robot_data$CATEGORY,
-                                   selected = 1,
-                                   width = '100%'),
+                fluidRow(
+                    wellPanel(
+                        style = "width: auto",
+                        ## Select box
+                        selectInput("category1", label = h3("Select Category"), 
+                                    choices = robot_data$CATEGORY,
+                                    selected = 1,
+                                    width = '100%')
+                    )
+                ),
+                fluidRow(
+                ## Chart Column
+                column(6, ## Column Size
                        ## Radio buttons
                        radioGroupButtons(
                            inputId = "chartType1", label = "Choose a graph:", 
@@ -73,43 +80,15 @@ ui <- navbarPage(
                            wordcloud2Output("wordCloud1")
                        )
                        
-                ),
-                ## Country 2 Column
-                column(6, ## Column Size
-                       
-                       ## Select box
-                       selectInput("category2", label = h3("Select Category 2"), 
-                                   choices = robot_data$CATEGORY, 
-                                   selected = 1,
-                                   width = '100%'),
-                       
-                       ## Radio buttons
-                       radioGroupButtons(
-                           inputId = "chartType2", label = "Choose a graph:", 
-                           choices = c("Subcategories" = "Subcategory", 
-                                       "Locations" = "Location", 
-                                       "Name" = "Name"),
-                           justified = TRUE),
-                       ## Plot rendering
-                       
-                       ### Waffle Chart
-                       conditionalPanel(
-                           condition = "input.chartType2 == 'Subcategory'",
-                           plotOutput("waffle2")
-                       ),
-                       
-                       ### Bar Chart
-                       conditionalPanel(
-                           condition = "input.chartType2 == 'Location'",
-                           plotOutput("compBarChart2")
-                       ),
-                       
-                       ### Word Cloud 
-                       conditionalPanel(
-                           condition = "input.chartType2 == 'Name'",
-                           wordcloud2Output("wordCloud2")
-                       )
-                       
+                    ),
+                column(6,
+                    wellPanel(
+                        style = "height: 500px",
+                        h2("What are they?"),
+                        uiOutput("carousel"),
+                        textOutput("descriptions")
+                    )
+                )
                 )
             )
         ), ## End of robot panel
@@ -160,7 +139,9 @@ ui <- navbarPage(
                                 options = list(
                                     "max-options" = 2,
                                     "max-options-text" = "Select Only 2 Regions"
-                                )),
+                                ),
+                                selected = c("North America", "Asia")
+                                ),
                             # Type of graph
                             radioGroupButtons(
                                 "regionChart",
@@ -168,7 +149,7 @@ ui <- navbarPage(
                                 choices = c("Total",
                                             "Categories", 
                                             "Types"),
-                                selected = 1,
+                                selected = "Total",
                                 direction = "vertical",
                                 justified = TRUE
                             )
@@ -494,6 +475,29 @@ server <- function(input, output) {
             coord_flip() +
             theme_classic()
         
+    })
+    
+    # UI
+    
+    ## Carousel
+    output$carousel <- renderUI({
+        ## Filtering Data
+        
+        temp_data <- robot_data %>% 
+            filter(CATEGORY == input$category1)
+        
+        
+        ## Carousel UI
+        
+        slickR(obj = temp_data$DESCRIPTION,
+               objLinks = temp_data$LINKS.OR.REFERENCES,
+               height = 100, 
+               width = "95%")
+    })
+    
+    ## Text descriptions for comparing categories tab
+    output$descriptions <- renderText({
+        "Example text"
     })
 }
 
