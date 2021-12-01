@@ -19,8 +19,8 @@ library(fmsb)
 library(magick)
 
 # Data
-robot_data <- read_excel("Round2ProjectRobotData.xlsx", sheet = 2) %>% 
-  filter(!is.na(CATEGORY))
+country_data <- read_excel("mapData.xlsx")
+robot_data <- read_excel("Round2ProjectRobotData.xlsx", sheet = 2)
 testImage <- image_read("TestImage.png")
 
 ui <- navbarPage(
@@ -36,364 +36,68 @@ ui <- navbarPage(
       sidebarLayout(
         sidebarPanel(
           pickerInput(
-            inputId = "country",
+            inputId = "covidBotCountry",
             label = "Country",
-            choices = robot_data
+            choices = country_data$Country
           ),
+          verbatimTextOutput("value")
+        ),
+        mainPanel(
+          imageOutput("img")
         )
       )
-      imageOutput("myImage")
     )
   )
 )
 
 server <- function(input, output, session) {
-  output$myImage <- renderImage({
-    tmpfile <- testImage %>%
+  countryData <- reactive({
+    country = input$covidBotCountry
+    
+    single_data = filter(country_data, Country == country)
+    
+    population = single_data$Population$country
+    GDP = single_data$'GDP Per Capita'
+    deaths = single_data$'Covid Deaths Per Million'
+    cases = single_data$total_cases_per_million
+    category = filter(robot_data, Country == country) %>%
+      subset(select=-c(Total)) %>%
+      max.col()
+    
+  })
+  
+  
+  
+  image <- image_read("TestImage.png")
+  image <- image_trim(image)
+  #output$value <- renderPrint(input$covidBotCountry)
+  
+  output$img <- renderImage({
+    country = CountryData()
+    
+    if(countryData().category == "Public Safety"){
+      image <- image_fill(image, "green", point = "+0+0", fuzz = 0)
+    }
+    if(countryData().category == "Clinical"){
+      image <- image_fill(image, "blue", point = "+0+0", fuzz = 0)
+    }
+    if(countryData().category == "Continuity of Work/Education"){
+      image <- image_fill(image, "orange", point = "+0+0", fuzz = 0)
+    }
+    if(countryData().category == "Quality of Life"){
+      image <- image_fill(image, "pink", point = "+0+0", fuzz = 0)
+    }
+    if(countryData().category == "Laboratory and Supply Chain Automation"){
+      image <- image_fill(image, "yellow", point = "+0+0", fuzz = 0)
+    }
+    if(countryData().category == "Non=Hospital Care"){
+      image <- image_fill(image, "purple", point = "+0+0", fuzz = 0)
+    }
+    
+    tmpfile <- image %>%
       image_write(tempfile(fileext='png'), format = 'png')
-    list(src = myImage, contentType = "image/jpeg")
+    list(src = tmpfile, contentType = "image/png")
   })
 }
 
 shinyApp(ui = ui, server = server)
-
-     ## Robot panel
-#     tabPanel(
-#       "Robots", # Title
-#       ## Layout
-#       fluidPage(
-#         ## Country 1 Column
-#         column(6, ## Column Size 
-#                ## Select box
-#                selectInput("category1", label = h3("Select Category 1"), 
-#                            choices = robot_data$CATEGORY,
-#                            selected = 1,
-#                            width = '100%'),
-#                ## Radio buttons
-#                radioGroupButtons(
-#                  inputId = "chartType1", label = "Choose a graph:", 
-#                  choices = c("Subcategories" = "Subcategory", 
-#                              "Locations" = "Location", 
-#                              "Name" = "Name"),
-#                  justified = TRUE),
-#                ## Image 
-#                conditionalPanel(
-#                  condition = "input.chartType1 == 'Subcategory'",
-#                  plotOutput("waffle1")
-#                ),
-#                conditionalPanel(
-#                  condition = "input.chartType1 == 'Location'",
-#                  plotOutput("compBarChart1")
-#                ),
-#                conditionalPanel(
-#                  condition = "input.chartType1 == 'Name'",
-#                  wordcloud2Output("wordCloud1")
-#                )
-#                
-#         ),
-#         ## Country 2 Column
-#         column(6, ## Column Size
-#                
-#                ## Select box
-#                selectInput("category2", label = h3("Select Category 2"), 
-#                            choices = robot_data$CATEGORY, 
-#                            selected = 1,
-#                            width = '100%'),
-#                
-#                ## Radio buttons
-#                radioGroupButtons(
-#                  inputId = "chartType2", label = "Choose a graph:", 
-#                  choices = c("Subcategories" = "Subcategory", 
-#                              "Locations" = "Location", 
-#                              "Name" = "Name"),
-#                  justified = TRUE),
-#                ## Plot rendering
-#                
-#                ### Waffle Chart
-#                conditionalPanel(
-#                  condition = "input.chartType2 == 'Subcategory'",
-#                  plotOutput("waffle2")
-#                ),
-#                
-#                ### Bar Chart
-#                conditionalPanel(
-#                  condition = "input.chartType2 == 'Location'",
-#                  plotOutput("compBarChart2")
-#                ),
-#                
-#                ### Word Cloud 
-#                conditionalPanel(
-#                  condition = "input.chartType2 == 'Name'",
-#                  wordcloud2Output("wordCloud2")
-#                )
-#                
-#         )
-#       )
-#     ), ## End of robot panel
-#     
-# )
-# 
-# # Define server logic required to draw a histogram  
-# server <- function(input, output) {
-#   
-#   # Graphs for Category Comparisons
-#   
-#   ## Bar Chart Category 1
-#   output$compBarChart1 <- renderPlot({
-#     
-#     ### Filtering dataset by given category
-#     cat1 <- input$category1 
-#     
-#     temp_data <- robot_data %>% 
-#       filter(CATEGORY == cat1) %>% 
-#       count(LOCATION) %>% 
-#       arrange(desc(n))
-#     
-#     ### Choosing variable to graph depending on input
-#     type1 <- temp_data$LOCATION
-#     
-#     ### Plotting Graph
-#     ggplot(temp_data, 
-#            aes(x = reorder(type1,n), y = n)) +
-#       geom_col(fill = "darkblue") +
-#       coord_flip() + 
-#       labs(title = paste(input$category1, "Robots by Country"),
-#            y = "Number of Robots",
-#            x = "Country") +
-#       theme_classic()
-#     
-#   })
-#   
-#   ## Bar Chart Category 2
-#   output$compBarChart2 <- renderPlot({
-#     
-#     ### Filtering dataset by given category
-#     cat2 <- input$category2
-#     
-#     temp_data <- robot_data %>% 
-#       filter(CATEGORY == cat2) %>% 
-#       count(LOCATION) %>% 
-#       arrange(desc(n))
-#     
-#     ### Choosing variable to graph depending on input
-#     type2 <- temp_data$LOCATION
-#     
-#     ### Plotting Graph
-#     ggplot(temp_data, 
-#            aes(x = reorder(type2, n), y = n)) +
-#       geom_col(fill = "darkblue") +
-#       coord_flip() + 
-#       labs(title = paste(input$category2, "Robots by Country"),
-#            y = "Number of Robots",
-#            x = "Country") +
-#       theme_classic()
-#     
-#   })
-#   
-#   ## Word Clouds
-#   
-#   output$wordCloud1 <- renderWordcloud2({
-#     
-#     ## Filtering dataset
-#     cat1 <- input$category1
-#     
-#     temp_data <- robot_data %>% 
-#       filter(CATEGORY == cat1,
-#              !(NAME %in% c("not sure", "unspecified", "Unspecified", "Not sure"))) %>% 
-#       select(NAME) %>% 
-#       count(NAME)
-#     
-#     ## Creating word cloud
-#     
-#     wordcloud2(temp_data, 
-#                size = 1, 
-#                color = 'random-dark')
-#     
-#   })
-#   
-#   output$wordCloud2 <- renderWordcloud2({
-#     
-#     ## Filtering dataset
-#     cat2 <- input$category2
-#     
-#     temp_data <- robot_data %>% 
-#       filter(CATEGORY == cat2,
-#              !(NAME %in% c("not sure", "unspecified", "Unspecified", "Not sure"))) %>% 
-#       select(NAME) %>% 
-#       count(NAME)
-#     
-#     ## Creating word cloud
-#     
-#     wordcloud2(temp_data, 
-#                size = 1, 
-#                color = 'random-dark')
-#     
-#   })
-#   
-#   ## Waffle graphs
-#   
-#   output$waffle1 <- renderPlot({
-#     ## Color Palette
-#     
-#     #pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
-#     #         "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
-#     
-#     pal <- c("#bec2cb", "#ffd700", "#e8d8cd", "#3c3b6e", "#ef4135",
-#              "#ff7912", "#00923f", "#0055a4", "#ef4135", "#fbbf16")
-#     
-#     ### Filtering dataset and creating a percent variable for chart
-#     cat1 <- input$category1
-#     
-#     temp_data <- robot_data %>%  
-#       filter(CATEGORY == cat1) %>%
-#       group_by(SUBCATEGORY) %>% 
-#       summarise(n = n()) %>% 
-#       mutate(percent = round(n/sum(n)*100)) %>% 
-#       arrange(percent, desc())
-#     
-#     ### Creating vector variable for plotting
-#     subcat_count <- temp_data$percent
-#     names(subcat_count) <-  paste(temp_data$SUBCATEGORY, "(", temp_data$n, "robots)")
-#     
-#     ### Plotting waffle chart
-#     waffle(subcat_count, 
-#            reverse = TRUE,
-#            color = pal,
-#            xlab = "1 square = 1% of total Robots",
-#            title = paste("Division of", cat1, "Robots"))
-#   })
-#   
-#   
-#   output$waffle2 <- renderPlot({
-#     
-#     ## Color Palette
-#     
-#     pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
-#              "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
-#     
-#     ## Filtering dataset by category
-#     cat2 <- input$category2
-#     
-#     temp_data <- robot_data %>%  
-#       filter(CATEGORY == cat2) %>%
-#       group_by(SUBCATEGORY) %>% 
-#       summarise(n = n()) %>% 
-#       mutate(percent = round(n/sum(n)*100)) %>% 
-#       arrange(percent, desc())
-#     
-#     ## Creating vector variable for plotting
-#     subcat_count <- temp_data$percent
-#     names(subcat_count) <- paste(temp_data$SUBCATEGORY, "(", temp_data$n, "robots)")
-#     
-#     
-#     ## Plotting waffle chart
-#     waffle(subcat_count,
-#            reverse = TRUE,
-#            color = pal,
-#            xlab = "1 square = 1% of total Robots",
-#            title = paste("Division of", cat2, "Robots"))
-#   })
-#   
-#   # Comparing Countries charts
-#   
-#   ## Spider Chart
-#   
-#   output$spider <- renderPlot({
-#     
-#     # Colors
-#     
-#     pal  <- c(rgb(0.2,0.7,0.2,0.2), rgb(0.2,0.2,0.7,0.2))
-#     
-#     ## Filtering dataset
-#     temp_data <- robot_data %>%
-#       group_by(Region) %>%
-#       filter(CATEGORY == input$category,
-#              Region %in% c(input$regions[1], input$regions[2])) %>%
-#       count(SUBCATEGORY) %>%
-#       arrange(desc(n))%>%
-#       pivot_wider(names_from = SUBCATEGORY, values_from = n)
-#     
-#     
-#     ## Making new dataset for plotting
-#     
-#     temp_data2 <- temp_data[2:ncol(temp_data)] 
-#     
-#     temp_data2[is.na(temp_data2)] <- 0
-#     
-#     rownames(temp_data2) <- temp_data$Region
-#     
-#     temp_data2 <- rbind(rep(20,5), rep(0,5), temp_data2)
-#     
-#     ## Plotting
-#     
-#     radarchart(temp_data2,
-#                axistype=1 , 
-#                #custom polygon
-#                pcol= pal , pfcol= pal , plwd=4 , plty=1,
-#                #custom the grid
-#                cglcol="grey", cglty=1, axislabcol="grey", caxislabels=seq(0,50,5), cglwd=0.8,
-#                #custom labels
-#                vlcex=0.6
-#     )
-#     
-#     # Add a legend
-#     legend(x=1, y=0.5, 
-#            legend = rownames(temp_data2)[3:4],
-#            bty = "n", pch=20 , col= pal , 
-#            text.col = "grey", cex=1.2, pt.cex=3)
-#   })
-#   
-#   ## type bar chart 
-#   
-#   output$typebar <- renderPlot({
-#     
-#     ## Filtering dataset
-#     temp_data <- robot_data %>%
-#       group_by(Region) %>%
-#       filter(Region %in% input$regions) %>% 
-#       count(TYPE)
-#     
-#     ## Plotting barchart
-#     ggplot(temp_data, aes(x = TYPE,
-#                           y = n,
-#                           fill = Region)) +
-#       geom_bar(position="dodge", stat="identity") +
-#       labs(x = "Robot Type",
-#            y = "Number of Robots",
-#            title = paste("Robot Type Distribution in",
-#                          input$regions[1], "and", 
-#                          input$regions[2])) + 
-#       theme_classic()
-#     
-#   })
-#   
-#   
-#   ## total bar chart 
-#   
-#   output$totalbar <- renderPlot({
-#     
-#     ## Filtering dataset
-#     temp_data <- robot_data %>%
-#       group_by(Region) %>%
-#       filter(Region %in% input$regions) %>% 
-#       count(Region)
-#     
-#     ## Plotting barchart
-#     ggplot(temp_data, aes(x = Region,
-#                           y = n,
-#                           fill = Region)) +
-#       geom_col() +
-#       labs(x = "Region",
-#            y = "Number of Robots",
-#            title = paste("Number of Robots in",
-#                          input$regions[1], "and", 
-#                          input$regions[2])) + 
-#       coord_flip() +
-#       theme_classic()
-#     
-#   })
-# }
-# 
-# # Run the application 
-# shinyApp(ui = ui, server = server)
-# 
