@@ -1,0 +1,51 @@
+Key,Country,Total,Top_Category,GDP Per Capita,Population,Covid Deaths Per Million,total_cases_per_million
+1,China,72,Public Safety,10500.39562,1397.72,3.47,68.347
+2,Kuwait,1,Public Safety,NA,4.21,585.68,95474.4
+3,Spain,12,Public Safety,27063.19392,47.08,1865.12,109765.512
+4,United Arab Emirates,5,Public Safety,NA,9.77,219.44,74252.011
+5,France,3,Public Safety,39030.36037,67.06,1678.51,113287.129
+6,Belgium,2,Non-Hospital Care,44594.37811,11.48,2309.81,146284.744
+7,Italy,13,Clinical,31676.2021,60.3,2206.3,82741.432
+8,United States,95,Continuity of Work/Education,63543.57779,328.24,2330.89,144789.067
+9,India,32,Public Safety,1900.70681,1366.42,340.03,24811.468
+10,Tunisia,1,Public Safety,3319.819024,11.69,2165.93,60085.22
+11,United Kingdom,16,Continuity of Work/Education,40284.63846,66.83,2141.4,149042.796
+12,Mexico,1,Public Safety,8346.702379,127.58,2288.28,29784.814
+13,Singapore,7,Clinical,59797.75218,5.7,108.53,47974.916
+14,Greece,2,Laboratory and Supply Chain Automation,17676.19248,10.72,1593.36,88776.922
+15,Rwanda,2,Public Safety,797.8555543,12.63,106.04,7556.575
+16,Australia,2,Public Safety,51812.15404,25.36,76.21,8065.079
+17,Malaysia,1,Public Safety,10401.79401,31.95,935.59,79923.158
+18,Thailand,7,Clinical,7189.041835,69.63,290.9,30034.791
+19,Phillipines,1,Public Safety,3298.829851,108.12,429.37,434.096
+20,Honduras,1,Public Safety,2405.732848,9.75,1064.22,37549.362
+21,Nigeria,3,Clinical,2097.092473,200.96,14.79,1011.936
+22,Equatorial Guinea,2,Clinical,7143.238705,1.36,124.63,9365.532
+23,Kenya,4,Clinical,1838.209968,52.57,101.29,4636.478
+24,South Korea,12,Continuity of Work/Education,31489.1227,51.71,62.17,8593.596
+25,Colombia,2,Quality of Life,5332.773524,50.34,2542,98763.171
+26,Germany,2,Laboratory and Supply Chain Automation,46208.42947,83.13,1187.87,68900.853
+27,Japan,6,Continuity of Work/Education,39538.87927,126.26,145.23,13696.217
+29,Turkey,1,Clinical,8538.16906,83.43,892.11,102611.586
+30,Ireland,3,Quality of Life,85267.76474,4.94,1135.09,111645.538
+31,Croatia,1,Clinical,13828.4695,4.07,2486.29,146993.488
+32,India,1,Clinical,1900.70681,1366.42,340.03,24811.468
+33,Israel,1,Clinical,43610.51623,9.05,900.67,144428.049
+34,Canada,5,Laboratory and Supply Chain Automation,43258.17632,37.59,785.22,47088.502
+35,Egypt,1,Clinical,3547.870848,100.39,197.04,3412.361
+36,Czech Republic,1,Clinical,22932.22497,10.67,2977.49,3053.181
+37,Jordan,1,Continuity of Work/Education,4282.765823,10.1,1119.61,91468.594
+38,Netherlands,1,Continuity of Work/Education,52397.11671,17.33,1062.66,152482.249
+39,Philippines,2,Continuity of Work/Education,3298.829851,108.12,429.37,25495.324
+40,Russia,1,Continuity of Work/Education,10126.72179,144.37,1769.35,64221.535
+41,South Africa,2,Continuity of Work/Education,5090.715025,58.56,1528.65,49274.644
+42,Norway,1,Continuity of Work/Education,67389.91205,5.35,186.24,47423.636
+43,Chile,1,Quality of Life,13231.70421,18.95,2007.65,91455.543
+44,Cyprus,1,Quality of Life,26623.80089,1.2,491.42,147265.919
+45,Lithuania,1,Quality of Life,19997.59253,2.79,2310.86,173469.122
+46,Austria,1,Quality of Life,48327.63111,8.88,1340.87,125267.719
+47,Ghana,1,Laboratory and Supply Chain Automation,2328.534642,30.42,39.68,4125.787
+48,Estonia,1,Laboratory and Supply Chain Automation,23027.027,1.33,1292.03,166889.528
+49,Sweden,1,Laboratory and Supply Chain Automation,52259.29738,10.29,1468.97,117995.004
+50,Poland,1,Laboratory and Supply Chain Automation,15656.18273,37.97,2106.72,92262.719
+51,Denmark,1,Laboratory and Supply Chain Automation,61063.31643,5.82,477.95,82462.084
