@@ -25,6 +25,9 @@ library(slickR)
 robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 3) %>% 
     filter(!is.na(CATEGORY))
 
+image_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 4)
+
+
 # Define UI for application that draws a histogram
 ui <- navbarPage(
     ## Theme
@@ -36,27 +39,22 @@ ui <- navbarPage(
     tabPanel(
         "Map", # Title
     ),
-    
-    ## Compare Panel
-    navbarMenu(
-        "Compare",
-        
-        ## Robot panel
-        tabPanel(
-            "Robots", # Title
-            ## Layout
-            fluidPage(
-                fluidRow(
-                    wellPanel(
-                        style = "width: auto",
-                        ## Select box
-                        selectInput("category1", label = h3("Select Category"), 
-                                    choices = robot_data$CATEGORY,
-                                    selected = 1,
-                                    width = '100%')
-                    )
-                ),
-                fluidRow(
+    ## Robot panel
+    tabPanel(
+        "Robots", # Title
+        ## Layout
+        fluidPage(
+            fluidRow(
+                wellPanel(
+                    style = "width: auto",
+                    ## Select box
+                    selectInput("category1", label = h3("Select Robot Category"), 
+                                choices = robot_data$CATEGORY,
+                                selected = 1,
+                                width = '100%')
+                )
+            ),
+            fluidRow(
                 ## Chart Column
                 column(6, ## Column Size
                        ## Radio buttons
@@ -80,19 +78,25 @@ ui <- navbarPage(
                            wordcloud2Output("wordCloud1")
                        )
                        
-                    ),
+                ),
                 column(6,
-                    wellPanel(
-                        style = "height: 500px",
-                        h2("What are they?"),
-                        uiOutput("carousel"),
-                        textOutput("descriptions")
-                    )
-                )
+                       wellPanel(
+                           style = "height: 440px;",
+                           wellPanel(
+                               style = "height: 400px; background-color: #fff",
+                               h2("What are they?", style = "padding: 10px; text-align: center"),
+                               slickROutput("carousel", height = "120px", width = "90%"),
+                               
+                           )
+                       )
                 )
             )
-        ), ## End of robot panel
-        
+        )
+    ), 
+    
+    ## Compare Panel
+    navbarMenu(
+        "Compare",
         ## Countries Panel
         tabPanel(
             "Regions", # Title
@@ -116,11 +120,7 @@ ui <- navbarPage(
                             conditionalPanel(
                                 condition = "input.regionChart == 'Types'",
                                 plotOutput("typebar")
-                            )
-                                  
-                                      
-                                 
-                                  
+                            )          
                         )
                     ),
                 column(
@@ -248,31 +248,6 @@ server <- function(input, output) {
         
     })
     
-    ## Bar Chart Category 2
-    output$compBarChart2 <- renderPlot({
-        
-        ### Filtering dataset by given category
-        cat2 <- input$category2
-        
-        temp_data <- robot_data %>% 
-            filter(CATEGORY == cat2) %>% 
-            count(LOCATION) %>% 
-            arrange(desc(n))
-        
-        ### Choosing variable to graph depending on input
-        type2 <- temp_data$LOCATION
-        
-        ### Plotting Graph
-        ggplot(temp_data, 
-               aes(x = reorder(type2, n), y = n)) +
-            geom_col(fill = "darkblue") +
-            coord_flip() + 
-            labs(title = paste(input$category2, "Robots by Country"),
-                 y = "Number of Robots",
-                 x = "Country") +
-            theme_classic()
-    
-    })
     
     ## Word Clouds
     
@@ -295,32 +270,11 @@ server <- function(input, output) {
 
     })
     
-    output$wordCloud2 <- renderWordcloud2({
-        
-        ## Filtering dataset
-        cat2 <- input$category2
-        
-        temp_data <- robot_data %>% 
-            filter(CATEGORY == cat2,
-                   !(NAME %in% c("not sure", "unspecified", "Unspecified", "Not sure"))) %>% 
-            select(NAME) %>% 
-            count(NAME)
-        
-        ## Creating word cloud
-        
-        wordcloud2(temp_data, 
-                  size = 1, 
-                  color = 'random-dark')
-        
-    })
     
     ## Waffle graphs
     
     output$waffle1 <- renderPlot({
         ## Color Palette
-        
-        #pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
-        #         "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
         
         pal <- c("#bec2cb", "#ffd700", "#e8d8cd", "#3c3b6e", "#ef4135",
                  "#ff7912", "#00923f", "#0055a4", "#ef4135", "#fbbf16")
@@ -329,7 +283,7 @@ server <- function(input, output) {
         cat1 <- input$category1
         
         temp_data <- robot_data %>%  
-            filter(CATEGORY == cat1) %>%
+            filter(CATEGORY == cat1, !is.na(SUBCATEGORY)) %>%
             group_by(SUBCATEGORY) %>% 
             summarise(n = n()) %>% 
             mutate(percent = round(n/sum(n)*100)) %>% 
@@ -342,41 +296,13 @@ server <- function(input, output) {
         ### Plotting waffle chart
         waffle(subcat_count, 
                reverse = TRUE,
-               color = pal,
+               color = pal[1:nrow(temp_data)],
                xlab = "1 square = 1% of total Robots",
-               title = paste("Division of", cat1, "Robots"))
+               title = paste("Division of", cat1, "Robots"),
+               flip = TRUE) 
     })
     
     
-    output$waffle2 <- renderPlot({
-        
-        ## Color Palette
-        
-        pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F",
-                 "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
-        
-        ## Filtering dataset by category
-        cat2 <- input$category2
-        
-        temp_data <- robot_data %>%  
-            filter(CATEGORY == cat2) %>%
-            group_by(SUBCATEGORY) %>% 
-            summarise(n = n()) %>% 
-            mutate(percent = round(n/sum(n)*100)) %>% 
-            arrange(percent, desc())
-        
-        ## Creating vector variable for plotting
-        subcat_count <- temp_data$percent
-        names(subcat_count) <- paste(temp_data$SUBCATEGORY, "(", temp_data$n, "robots)")
-        
-        
-        ## Plotting waffle chart
-        waffle(subcat_count,
-               reverse = TRUE,
-               color = pal,
-               xlab = "1 square = 1% of total Robots",
-               title = paste("Division of", cat2, "Robots"))
-    })
     
     # Comparing Countries charts
     
@@ -480,25 +406,40 @@ server <- function(input, output) {
     # UI
     
     ## Carousel
-    output$carousel <- renderUI({
+    output$carousel <- renderSlickR({
         ## Filtering Data
         
-        temp_data <- robot_data %>% 
+        temp_data <- image_data %>% 
             filter(CATEGORY == input$category1)
         
         
         ## Carousel UI
         
-        slickR(obj = temp_data$DESCRIPTION,
-               objLinks = temp_data$LINKS.OR.REFERENCES,
-               height = 100, 
-               width = "95%")
+        carousel1 <- (slickR(temp_data$SUBCATEGORY, 
+                             slideType = 'p') + settings(autoplay = TRUE,
+                                                         fade = TRUE, 
+                                                         pauseOnHover = TRUE, 
+                                                         autoplaySpeed = 6000) ) 
+        
+        carousel2 <- slickR(obj = temp_data$Path,
+                            objLinks = temp_data$Link,
+                            height = 100, 
+                            width = "95%") + settings(arrow = FALSE, 
+                                                      fade = TRUE, 
+                                                      adaptiveHeight = TRUE,
+                                                      pauseOnHover = TRUE)
+        
+        carousel3 <- (slickR(temp_data$DESCRIPTION, 
+                             slideType = 'p') + settings(arrows = FALSE, 
+                                                         fade = TRUE,
+                                                         pauseOnHover = TRUE) )
+        
+        carousel1 %synch% ((carousel2) %synch% (carousel3))
+        
     })
     
-    ## Text descriptions for comparing categories tab
-    output$descriptions <- renderText({
-        "Example text"
-    })
+    
+    
 }
 
 # Run the application 
