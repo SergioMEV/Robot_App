@@ -56,7 +56,7 @@ server <- function(input, output, session) {
     
     single_data = filter(country_data, Country == country)
     
-    population = single_data$Population$country
+    population = single_data$Population
     GDP = single_data$'GDP Per Capita'
     deaths = single_data$'Covid Deaths Per Million'
     cases = single_data$total_cases_per_million
@@ -68,29 +68,29 @@ server <- function(input, output, session) {
   
   
   
-  image <- image_read("TestImage.png")
+  image <- image_read("RobotImage.png")
   image <- image_trim(image)
   #output$value <- renderPrint(input$covidBotCountry)
   
   output$img <- renderImage({
     country = CountryData()
     
-    if(countryData().category == "Public Safety"){
+    if(category == "Public Safety"){
       image <- image_fill(image, "green", point = "+0+0", fuzz = 0)
     }
-    if(countryData().category == "Clinical"){
+    if(category == "Clinical"){
       image <- image_fill(image, "blue", point = "+0+0", fuzz = 0)
     }
-    if(countryData().category == "Continuity of Work/Education"){
+    if(category == "Continuity of Work/Education"){
       image <- image_fill(image, "orange", point = "+0+0", fuzz = 0)
     }
-    if(countryData().category == "Quality of Life"){
+    if(category == "Quality of Life"){
       image <- image_fill(image, "pink", point = "+0+0", fuzz = 0)
     }
-    if(countryData().category == "Laboratory and Supply Chain Automation"){
+    if(category == "Laboratory and Supply Chain Automation"){
       image <- image_fill(image, "yellow", point = "+0+0", fuzz = 0)
     }
-    if(countryData().category == "Non=Hospital Care"){
+    if(category == "Non=Hospital Care"){
       image <- image_fill(image, "purple", point = "+0+0", fuzz = 0)
     }
     
