@@ -66,8 +66,6 @@ server <- function(input, output, session) {
     
   })
   
-  
-  
   image <- image_read("RobotImage.png")
   image <- image_trim(image)
   #output$value <- renderPrint(input$covidBotCountry)
