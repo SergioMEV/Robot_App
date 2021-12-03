@@ -167,6 +167,19 @@ ui <- navbarPage(
                                 choices = distinct(robot_data, CATEGORY),
                                 selected = 1)
                         )
+                    ),
+                    conditionalPanel(
+                        condition = "input.regionChart == 'Types'",
+                        wellPanel(
+                            style = "background-color: #fff; 
+                                     border-color: #2c3e50; 
+                                     height: auto;
+                                     border-width: 2px;
+                                     padding: 10px",
+                            p(strong('USVs'), "are boats that operate without a crew."),
+                            p(strong('UGVs'), "are ground vehicles that operate without a crew."),
+                            p(strong('UAS'), "are air vehicles that operate without a crew.")
+                        )
                     )
                 )
             )
