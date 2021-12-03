@@ -2,15 +2,16 @@ library(fmsb)
 library(readxl)
 library(tidyverse)
 
-robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 4) %>%
+robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 3) %>%
   filter(!is.na(CATEGORY))
 
+
 temp_data <- robot_data %>%  
-  filter(CATEGORY == "Clinical Health", !is.na(SUBCATEGORY)) %>%
+  filter(CATEGORY == "Public Safety", !is.na(SUBCATEGORY)) %>%
   group_by(SUBCATEGORY) %>% 
   summarise(n = n()) %>% 
-  mutate(percent = n/sum(n)*100) %>% 
-  arrange(percent, desc())
+  mutate(percent = ceiling(n/sum(n)*100)) %>% 
+  arrange(desc(percent))
 
 temp_data2 <- robot_data %>% 
   select(DESCRIPTION)

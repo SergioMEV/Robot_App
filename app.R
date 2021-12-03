@@ -94,86 +94,83 @@ ui <- navbarPage(
         )
     ), 
     
-    ## Compare Panel
-    navbarMenu(
-        "Compare",
-        ## Countries Panel
-        tabPanel(
-            "Regions", # Title
-            fluidPage(
-                column(
-                        8,
-                        wellPanel(
-                            style = "background-color: #fff; 
-                                    border-color: #2c3e50; 
-                                    height: 450px;
-                                    border-width: 2px",
-                            # conditional panels for rendering plots
-                            conditionalPanel(
-                                condition = "input.regionChart == 'Total'",
-                                plotOutput("totalbar")
-                            ),
-                            conditionalPanel(
-                                condition = "input.regionChart == 'Categories'",
-                                plotOutput("spider")
-                            ),
-                            conditionalPanel(
-                                condition = "input.regionChart == 'Types'",
-                                plotOutput("typebar")
-                            )          
-                        )
-                    ),
-                column(
-                        4,
-                        wellPanel(
-                            style = "background-color: #fff; 
-                                    border-color: #2c3e50; 
-                                    height: 300px;
-                                    border-width: 2px",
-                            # Region Select
-                            pickerInput(
-                                "regions",
-                                label = "Region(s)", 
-                                choices = distinct(robot_data, Region),
-                                multiple = TRUE,
-                                options = list(
-                                    "max-options" = 2,
-                                    "max-options-text" = "Select Only 2 Regions"
-                                ),
-                                selected = c("North America", "Asia")
-                                ),
-                            # Type of graph
-                            radioGroupButtons(
-                                "regionChart",
-                                label = "Label",
-                                choices = c("Total",
-                                            "Categories", 
-                                            "Types"),
-                                selected = "Total",
-                                direction = "vertical",
-                                justified = TRUE
-                            )
+    
+    ## Countries Panel
+    tabPanel(
+        "Regions", # Title
+        fluidPage(
+            column(
+                    8,
+                    wellPanel(
+                        style = "background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: 450px;
+                                border-width: 2px",
+                        # conditional panels for rendering plots
+                        conditionalPanel(
+                            condition = "input.regionChart == 'Total'",
+                            plotOutput("totalbar")
                         ),
-                        
                         conditionalPanel(
                             condition = "input.regionChart == 'Categories'",
-                            wellPanel(
-                                style = "background-color: #fff; 
-                                         border-color: #2c3e50; 
-                                         height: 120px;
-                                         border-width: 2px",
-                            # Category
-                                pickerInput(
-                                    inputId = "category",
-                                    label = "Category", 
-                                    choices = distinct(robot_data, CATEGORY),
-                                    selected = 1)
-                            )
+                            plotOutput("spider")
+                        ),
+                        conditionalPanel(
+                            condition = "input.regionChart == 'Types'",
+                            plotOutput("typebar")
+                        )          
+                    )
+                ),
+            column(
+                    4,
+                    wellPanel(
+                        style = "background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: 300px;
+                                border-width: 2px",
+                        # Region Select
+                        pickerInput(
+                            "regions",
+                            label = "Region(s)", 
+                            choices = distinct(robot_data, Region),
+                            multiple = TRUE,
+                            options = list(
+                                "max-options" = 2,
+                                "max-options-text" = "Select Only 2 Regions"
+                            ),
+                            selected = c("North America", "Asia")
+                            ),
+                        # Type of graph
+                        radioGroupButtons(
+                            "regionChart",
+                            label = "Label",
+                            choices = c("Total",
+                                        "Categories", 
+                                        "Types"),
+                            selected = "Total",
+                            direction = "vertical",
+                            justified = TRUE
+                        )
+                    ),
+                    
+                    conditionalPanel(
+                        condition = "input.regionChart == 'Categories'",
+                        wellPanel(
+                            style = "background-color: #fff; 
+                                     border-color: #2c3e50; 
+                                     height: 120px;
+                                     border-width: 2px",
+                        # Category
+                            pickerInput(
+                                inputId = "category",
+                                label = "Category", 
+                                choices = distinct(robot_data, CATEGORY),
+                                selected = 1)
                         )
                     )
                 )
-            ) # End of compare countries tab
-        ),
+            )
+        ), # End of compare countries tab
     
     ## About Section
     navbarMenu(
@@ -287,7 +284,7 @@ server <- function(input, output) {
             group_by(SUBCATEGORY) %>% 
             summarise(n = n()) %>% 
             mutate(percent = ceiling(n/sum(n)*100)) %>% 
-            arrange(percent, desc())
+            arrange(desc(percent))
         
         ### Creating vector variable for plotting
         subcat_count <- temp_data$percent
