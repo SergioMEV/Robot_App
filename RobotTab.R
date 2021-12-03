@@ -21,8 +21,6 @@ library(magick)
 # Data
 country_data <- read_excel("mapData.xlsx")
 country_data <- filter(country_data, Top_Category != "NA")
-robot_data <- read_excel("Round2ProjectRobotData.xlsx", sheet = 2)
-testImage <- image_read("TestImage.png")
 
 ui <- navbarPage(
   ## Theme
