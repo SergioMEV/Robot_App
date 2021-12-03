@@ -286,12 +286,16 @@ server <- function(input, output) {
             filter(CATEGORY == cat1, !is.na(SUBCATEGORY)) %>%
             group_by(SUBCATEGORY) %>% 
             summarise(n = n()) %>% 
-            mutate(percent = round(n/sum(n)*100)) %>% 
+            mutate(percent = ceiling(n/sum(n)*100)) %>% 
             arrange(percent, desc())
         
         ### Creating vector variable for plotting
         subcat_count <- temp_data$percent
         names(subcat_count) <-  paste(temp_data$SUBCATEGORY, "(", temp_data$n, "robots)")
+        
+        if(sum(temp_data$percent) > 100){
+            subcat_count[1] <- (subcat_count[1] - (sum(temp_data$percent)%%100 ))
+        }
         
         ### Plotting waffle chart
         waffle(subcat_count, 
