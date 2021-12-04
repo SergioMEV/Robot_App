@@ -1,0 +1,63 @@
+---
+title: "test"
+output: html_document
+---
+
+## Including Plots
+
+You can also embed plots, for example:
+```{r}
+library(tidyverse)
+```
+```{r pressure, echo=FALSE}
+country_data <- read_excel("mapData.xlsx")
+country_data <- filter(country_data, Top_Category != "NA")
+ robot <- image_read("RobotImage.png") %>%
+    image_trim()
+ money <- image_read("MoneyBag.png") %>%
+    image_trim()%>%
+    image_fill("none", point = "+0+0", fuzz = 0) %>%
+    image_fill("none", point = "+300+0", fuzz = 0) %>%
+    image_fill("none", point = "+0+300", fuzz = 0) %>%
+    image_fill("none", point = "+390+300", fuzz = 0) %>%
+    image_scale("50x50")
+img = image_composite(robot, money,gravity = "south", offset = "+120+0")
+print(img)
+```
+
+```{r}
+
+#unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))[[1]]
+casesPerMillion <- as.numeric(country_data[country_data$Country == "Australia","Covid_Cases_Per_Million"][[1]])
+deathsPerMillion <- as.numeric(country_data[country_data$Country == "Australia","Covid_Deaths_Per_Million"][[1]])
+casesQuantile <- unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))
+deathsQuantile <- unname(quantile(as.numeric(country_data$Covid_Deaths_Per_Million), na.rm = TRUE))
+```
+
+```{r}
+ggplot(country_data) + 
+  geom_boxplot(aes(y=as.numeric(Covid_Deaths_Per_Million))) + 
+  scale_x_discrete() + 
+  labs(title = "Covid Deaths per Million from all Countries", y = "Covid Deaths (Per Million)") + 
+  coord_flip() + 
+  geom_point(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0), colour = "red", size = 4) + 
+  geom_text(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0, label = Covid_Deaths_Per_Million, vjust =1.5, family = "serif")) +
+  geom_text(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0, label = Country , vjust =-1.5, family = "serif"))
+```
+
+```{r}
+ if(casesPerMillion <= casesQuantile[2]){#first quartile
+      robot1 <- image_fill(robot, "deepskyblue", point = "+455+180", fuzz = 0)
+ }else if(casesPerMillion <= casesQuantile[3]){#second quartile
+  
+ }else if(casesPerMillion <= casesQuantile[4]){#third
+   
+ }else if(casesPerMillion <= casesQuantile[5]){#fourth
+  
+}
+print(robot1)
+
+##EYES: +200+110 +255+120
+##Mask +455+180
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
