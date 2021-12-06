@@ -18,10 +18,11 @@ library(htmltools)
 library(fmsb)
 library(magick)
 
-# Data
+# Data. Countries with no robots are filtered out.
 country_data <- read_excel("mapData.xlsx")
 country_data <- filter(country_data, Top_Category != "NA")
 
+# UI section of app
 ui <- navbarPage(
   ## Theme
   theme = shinytheme("flatly"),
@@ -34,6 +35,7 @@ ui <- navbarPage(
     fluidPage(
       sidebarLayout(
         sidebarPanel(
+          # Drop down menu to select country to visualize
           pickerInput(
             inputId = "covidBotCountry",
             label = "Country",
@@ -49,8 +51,11 @@ ui <- navbarPage(
   )
 )
 
+# Server section of app
 server <- function(input, output, session) {
   
+  # Base image of robot and money bag are not reactive so are read here with
+  # some basic modifications
   robot <- image_read("RobotImage.png") %>%
     image_trim()
     # image_fill("none", point = "+0+0", fuzz = 0) %>%
@@ -68,17 +73,20 @@ server <- function(input, output, session) {
     image_fill("none", point = "+390+300", fuzz = 0) %>%
     image_scale("50x50")
   
+  # Reactive image modifications
   output$img <- renderImage({
+    # Get the selected country and store key information for easier access.
     country = input$covidBotCountry
-    
     single_data = filter(country_data, Country == country)
-    
     population = 180 -single_data$populationRank %>% as.numeric()
     gdp = single_data$gdpRank
     deaths = single_data$Covid_Deaths_Per_Million %>% as.numeric()
     cases = 180 - single_data$caseRank
     category = single_data$Top_Category
     
+    # Color of the central body determined by which category of robot is most
+    # used in the country. Colors chosen by the category's highlighting in the
+    # original data set.
     if(category == "Public Safety"){
       robot <- image_fill(robot, "light green", point = "+250+75", fuzz = 0)
     }
@@ -95,10 +103,17 @@ server <- function(input, output, session) {
       robot <- image_fill(robot, "#d633f2", point = "+250+75", fuzz = 0)
     }
     
+    # Color of mask held by the robot determined by (rank of) total Covid cases.
+    
+    # Color of needle determined by (rank of) total Covid deaths
+    
+    # Obsolete snippet, remove when top two are changed. Maybe keep brightness
+    # related to population?
     robot <- image_modulate(robot, brightness = 100 + 4*(log10(population)),
                             saturation = 100 + (cases / 3.3),
                             hue = 100 + 10*(log10(deaths)))
-
+    
+    # Size of money bag changed according to rank of country's GDP per capita.
     if(gdp <= 36){
       money <- image_scale(money, "150x150")
     } else if (gdp <= 72){
@@ -115,6 +130,8 @@ server <- function(input, output, session) {
       image_write(tempfile(fileext='png'), format = 'png')
     list(src = tmpfile, contentType = "image/png")
   }, deleteFile = TRUE)
+  
+  # Reactive text describing how the image is altered
   output$label <- renderUI({
     country = input$covidBotCountry
     
