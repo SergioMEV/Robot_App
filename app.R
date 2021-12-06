@@ -46,17 +46,19 @@ ui <- navbarPage(
     ## Theme
     theme = shinytheme("flatly"),
     ## App Title
-    "App",
-    
+    "CBE",
+    ## Intro tab
+    tabPanel(
+        "Intro",
+    ),
     ## Map Panel
     tabPanel(
-        "Map",
+        "Map",# Title
         style = "overflow-y: auto",
-        # Title
-        
-            fluidRow(
-                leafletOutput("myMap")
-            ),
+        # Map output
+        fluidRow(
+            leafletOutput("myMap")
+        ),
         
         absolutePanel( #Options panel
             theme = shinytheme("flatly"), 
@@ -240,7 +242,7 @@ ui <- navbarPage(
     
     ## Robot Panel
     tabPanel(
-        "Robot", # Title
+        "CovidBot", # Title
     ),
     
     ## About Section
