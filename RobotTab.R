@@ -20,7 +20,7 @@ library(magick)
 
 # Data. Countries with no robots are filtered out.
 country_data <- read_excel("mapData.xlsx")
-country_data <- filter(country_data, Top_Category != "NA")
+country_data <- filter(country_data, Top_Category != "NA" & GDP_Per_Capita != "NA")
 
 # UI section of app
 ui <- navbarPage(
@@ -58,13 +58,6 @@ server <- function(input, output, session) {
   # some basic modifications
   robot <- image_read("RobotImage.png") %>%
     image_trim()
-    # image_fill("none", point = "+0+0", fuzz = 0) %>%
-    # image_fill("none", point = "+345+0", fuzz = 0) %>% 
-    # image_fill("none", point = "+345+300", fuzz = 0) %>%
-    # image_fill("none", point = "+0+300", fuzz = 0) %>%
-    # image_fill("none", point = "+200+330", fuzz = 0) %>%
-    # image_fill("none", point = "+450+150", fuzz = 0)
-  
   money <- image_read("MoneyBag.png") %>%
     image_trim() %>%
     image_fill("none", point = "+0+0", fuzz = 0) %>%
@@ -78,11 +71,14 @@ server <- function(input, output, session) {
     # Get the selected country and store key information for easier access.
     country = input$covidBotCountry
     single_data = filter(country_data, Country == country)
-    population = 180 -single_data$populationRank %>% as.numeric()
+    pop = single_data$Population %>% as.numeric()
     gdp = single_data$gdpRank
     deaths = single_data$Covid_Deaths_Per_Million %>% as.numeric()
-    cases = 180 - single_data$caseRank
+    cases = as.numeric(single_data$Covid_Cases_Per_Million)
     category = single_data$Top_Category
+    casesQuantile <- unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))
+    deathsQuantile <- unname(quantile(as.numeric(country_data$Covid_Deaths_Per_Million), na.rm = TRUE))
+    popQuantile <- unname(quantile(as.numeric(country_data$Population), na.rm = TRUE))
     
     # Color of the central body determined by which category of robot is most
     # used in the country. Colors chosen by the category's highlighting in the
@@ -104,15 +100,36 @@ server <- function(input, output, session) {
     }
     
     # Color of mask held by the robot determined by (rank of) total Covid cases.
-    
-    # Color of needle determined by (rank of) total Covid deaths
-    
-    # Obsolete snippet, remove when top two are changed. Maybe keep brightness
-    # related to population?
-    robot <- image_modulate(robot, brightness = 100 + 4*(log10(population)),
-                            saturation = 100 + (cases / 3.3),
-                            hue = 100 + 10*(log10(deaths)))
-    
+    if(cases <= casesQuantile[2]){#first quartile
+      robot <- image_fill(robot, "lightcyan", point = "+455+180", fuzz = 0)
+    }else if(cases <= casesQuantile[3]){#second quartile
+      robot <- image_fill(robot, "lightblue2", point = "+455+180", fuzz = 0)
+    }else if(cases <= casesQuantile[4]){#third
+      robot <- image_fill(robot, "lightskyblue", point = "+455+180", fuzz = 0)
+    }else if(cases <= casesQuantile[5]){#fourth
+      robot <- image_fill(robot, "dodgerblue4", point = "+455+180", fuzz = 0)
+    }
+    # Color of hat symbol determined by (rank of) total Covid deaths
+    if(deaths <= deathsQuantile[2]){#first quartile
+      robot <- image_fill(robot, "lightpink", point = "+250+30", fuzz = 0)
+    }else if(deaths <= deathsQuantile[3]){#second quartile
+      robot <- image_fill(robot, "brown1", point = "+250+30", fuzz = 0)
+    }else if(deaths <= deathsQuantile[4]){#third
+      robot <- image_fill(robot, "red3", point = "+250+30", fuzz = 0)
+    }else if(deaths <= deathsQuantile[5]){#fourth
+      robot <- image_fill(robot, "red4", point = "+250+30", fuzz = 0)
+    }
+    # Color of needle determined by population
+    if(pop <= popQuantile[2]){#first quartile
+      robot <- image_fill(robot, "moccasin", point = "+50+130", fuzz = 0)
+    }else if(pop <= popQuantile[3]){#second quartile
+      robot <- image_fill(robot, "navajowhite3", point = "+50+130", fuzz = 0)
+    }else if(pop <= popQuantile[4]){#wheat
+      robot <- image_fill(robot, "lightpink", point = "+50+130", fuzz = 0)
+    }else if(pop <= popQuantile[5]){#fourth
+      robot <- image_fill(robot, "wheat3", point = "+50+130", fuzz = 0)
+    }
+
     # Size of money bag changed according to rank of country's GDP per capita.
     if(gdp <= 36){
       money <- image_scale(money, "150x150")
@@ -137,7 +154,7 @@ server <- function(input, output, session) {
     
     single_data = filter(country_data, Country == country)
     
-    population = single_data$Population %>% as.numeric()
+    pop = single_data$Population %>% as.numeric()
     gdp = single_data$gdpRank
     numGDP = single_data$GDP_Per_Capita %>% as.numeric()
     deaths = single_data$Covid_Deaths_Per_Million %>% as.numeric()
@@ -163,12 +180,9 @@ server <- function(input, output, session) {
       str1 <- paste(country, " has mostly ", category, " robots, so the base color is purple. ")
     }
     
-    str2 <- paste("A population of ", population, " million increases brightness by ",
-          round(4*(log10(as.numeric(population))), 2), "%. ")
-    str3 <- paste(round(cases, 2), " Covid cases per million increases saturation by ",
-          round((180 - single_data$caseRank) / 3.3, 2), "%. ")
-    str4 <- paste(round(deaths, 2), " Covid deaths per million increases hue by ",
-          round(10*(log10(as.numeric(deaths))), 2), ". ")
+    str2 <- paste("A population of ", pop, " million changes the color of the needle. ")
+    str3 <- paste(round(cases, 2), " Covid cases per million changes the color of the mask. ")
+    str4 <- paste(round(deaths, 2), " Covid deaths per million changes the color of the cross on the hat. ")
     
     if(gdp <= 36){
       str5 <- paste("A GDP per capita of $", round(numGDP, 2), " makes the bag very big.")
