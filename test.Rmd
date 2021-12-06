@@ -28,8 +28,8 @@ print(img)
 ```{r}
 
 #unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))[[1]]
-casesPerMillion <- as.numeric(country_data[country_data$Country == "Australia","Covid_Cases_Per_Million"][[1]])
-deathsPerMillion <- as.numeric(country_data[country_data$Country == "Australia","Covid_Deaths_Per_Million"][[1]])
+casesPerMillion <- as.numeric(country_data[country_data$Country == "Spain","Covid_Cases_Per_Million"][[1]])
+deathsPerMillion <- as.numeric(country_data[country_data$Country == "Spain","Covid_Deaths_Per_Million"][[1]])
 casesQuantile <- unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))
 deathsQuantile <- unname(quantile(as.numeric(country_data$Covid_Deaths_Per_Million), na.rm = TRUE))
 ```
@@ -38,26 +38,47 @@ deathsQuantile <- unname(quantile(as.numeric(country_data$Covid_Deaths_Per_Milli
 ggplot(country_data) + 
   geom_boxplot(aes(y=as.numeric(Covid_Deaths_Per_Million))) + 
   scale_x_discrete() + 
-  labs(title = "Covid Deaths per Million from all Countries", y = "Covid Deaths (Per Million)") + 
+  labs(title = "Covid Deaths per Million for All Countries", y = "Covid Deaths (Per Million)", x = "Countries Quartile Information") + 
   coord_flip() + 
-  geom_point(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0), colour = "red", size = 4) + 
-  geom_text(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0, label = Covid_Deaths_Per_Million, vjust =1.5, family = "serif")) +
-  geom_text(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0, label = Country , vjust =-1.5, family = "serif"))
+  geom_point(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0), colour = "blue", size = 4) +
+  geom_text(data = single_data, aes(y = as.numeric(Covid_Deaths_Per_Million), x = 0, label = paste(Country, ":",Covid_Deaths_Per_Million) , vjust =-1.5, family = "serif"), fontface = "bold") + theme_classic()
 ```
 
 ```{r}
  if(casesPerMillion <= casesQuantile[2]){#first quartile
-      robot1 <- image_fill(robot, "deepskyblue", point = "+455+180", fuzz = 0)
+      robot1 <- image_fill(robot, "lightcyan", point = "+455+180", fuzz = 0)
  }else if(casesPerMillion <= casesQuantile[3]){#second quartile
-  
+      robot1 <- image_fill(robot, "lightblue2", point = "+455+180", fuzz = 0)
  }else if(casesPerMillion <= casesQuantile[4]){#third
-   
+     robot1 <- image_fill(robot, "lightskyblue", point = "+455+180", fuzz = 0)
  }else if(casesPerMillion <= casesQuantile[5]){#fourth
-  
-}
+      robot1 <- image_fill(robot, "dodgerblue4", point = "+455+180", fuzz = 0)
+ }
 print(robot1)
+```
 
+```{r}
+ if(deathsPerMillion <= deathsQuantile[2]){#first quartile
+      robot1 <- image_fill(robot, "lightpink", point = "+50+130", fuzz = 0)
+ }else if(deathsPerMillion <= deathsQuantile[3]){#second quartile
+      robot1 <- image_fill(robot, "brown1", point = "+50+130", fuzz = 0)
+ }else if(deathsPerMillion <= deathsQuantile[4]){#third
+      robot1 <- image_fill(robot, "lightpink", point = "+250+30", fuzz = 0)
+ }else if(deathsPerMillion <= deathsQuantile[5]){#fourth
+      robot1 <- image_fill(robot, "red4", point = "+50+130", fuzz = 0)
+ }
+
+print(robot1)
+#Needle
 ##EYES: +200+110 +255+120
 ##Mask +455+180
 ```
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+money <- image_read("flags/Australia.jpg") %>%
+  image_trim() %>%
+    image_scale("50x50")
+
+img <- image_composite(robot, money, offset = "+150+250")
+print(img)
+```
