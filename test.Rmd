@@ -35,7 +35,7 @@ deathsQuantile <- unname(quantile(as.numeric(country_data$Covid_Deaths_Per_Milli
 ```
 
 ```{r}
-#Ggplot of CovidDeaths only
+#Ggplot of CovidDeaths only using country data and single data
 
 ggplot(country_data) + 
   geom_boxplot(aes(y=as.numeric(Covid_Deaths_Per_Million))) + 
@@ -80,10 +80,4 @@ print(robot1)
 ```
 
 ```{r}
-money <- image_read("flags/Australia.jpg") %>%
-  image_trim() %>%
-    image_scale("50x50")
-
-img <- image_composite(robot, money, offset = "+150+250")
-print(img)
 ```
