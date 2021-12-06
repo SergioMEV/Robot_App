@@ -26,8 +26,8 @@ print(img)
 ```
 
 ```{r}
+# Cases and Deaths information based on country_data of one country
 
-#unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))[[1]]
 casesPerMillion <- as.numeric(country_data[country_data$Country == "Spain","Covid_Cases_Per_Million"][[1]])
 deathsPerMillion <- as.numeric(country_data[country_data$Country == "Spain","Covid_Deaths_Per_Million"][[1]])
 casesQuantile <- unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))
@@ -36,6 +36,8 @@ deathsPerMillion
 ```
 
 ```{r}
+#Ggplot of CovidDeaths only
+
 ggplot(country_data) + 
   geom_boxplot(aes(y=as.numeric(Covid_Deaths_Per_Million))) + 
   scale_x_discrete() + 
@@ -46,6 +48,7 @@ ggplot(country_data) +
 ```
 
 ```{r}
+#Draw cases on mask
  if(casesPerMillion <= casesQuantile[2]){#first quartile
       robot1 <- image_fill(robot, "lightcyan", point = "+455+180", fuzz = 0)
  }else if(casesPerMillion <= casesQuantile[3]){#second quartile
@@ -59,14 +62,16 @@ print(robot1)
 ```
 
 ```{r}
+# Draw deaths on cross
+
  if(deathsPerMillion <= deathsQuantile[2]){#first quartile
-      robot1 <- image_fill(robot, "lightpink", point = "+50+130", fuzz = 0)
+      robot1 <- image_fill(robot, "lightpink", point = "+250+30", fuzz = 0)
  }else if(deathsPerMillion <= deathsQuantile[3]){#second quartile
-      robot1 <- image_fill(robot, "brown1", point = "+50+130", fuzz = 0)
+      robot1 <- image_fill(robot, "brown1", point = "+250+30", fuzz = 0)
  }else if(deathsPerMillion <= deathsQuantile[4]){#third
       robot1 <- image_fill(robot, "lightpink", point = "+250+30", fuzz = 0)
  }else if(deathsPerMillion <= deathsQuantile[5]){#fourth
-      robot1 <- image_fill(robot, "red4", point = "+50+130", fuzz = 0)
+      robot1 <- image_fill(robot, "red4", point = "+250+30", fuzz = 0)
  }
 
 print(robot1)
