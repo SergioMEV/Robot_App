@@ -32,6 +32,7 @@ casesPerMillion <- as.numeric(country_data[country_data$Country == "Spain","Covi
 deathsPerMillion <- as.numeric(country_data[country_data$Country == "Spain","Covid_Deaths_Per_Million"][[1]])
 casesQuantile <- unname(quantile(as.numeric(country_data$Covid_Cases_Per_Million), na.rm = TRUE))
 deathsQuantile <- unname(quantile(as.numeric(country_data$Covid_Deaths_Per_Million), na.rm = TRUE))
+deathsPerMillion
 ```
 
 ```{r}
