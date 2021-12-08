@@ -9,9 +9,9 @@ robot_data <- read_excel("data/Round2ProjectRobotData.xlsx", sheet = 3) %>%
 temp_data <- robot_data %>%  
   filter(CATEGORY == "Public Safety", !is.na(SUBCATEGORY)) %>%
   group_by(SUBCATEGORY) %>% 
-  summarise(n = n()) %>% 
-  mutate(percent = ceiling(n/sum(n)*100)) %>% 
-  arrange(desc(percent))
+   count(SUBCATEGORY) %>% 
+   mutate(percent = ceiling((n/sum(n))*100)) %>% 
+   arrange(desc(percent))
 
 temp_data2 <- robot_data %>% 
   select(DESCRIPTION)
@@ -19,6 +19,7 @@ temp_data2 <- robot_data %>%
 
 library(htmlwidgets)
 library(slickR)
+
 
 if(interactive()){
   slickR(obj=nba_team_logo$uri)
