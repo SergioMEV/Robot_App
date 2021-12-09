@@ -294,16 +294,6 @@ ui <- navbarPage(
     navbarMenu(
         "About", #Title
         
-        ## Purpose Panel
-        tabPanel(
-            "Purpose", # Title
-            mainPanel(
-                h1("Robots in response to COVID-19"),
-                p(" "),
-            ),
-            
-        ),
-        
         ## Takeaways Panel
         tabPanel(
           "Takeaways", # Title 
@@ -336,7 +326,15 @@ ui <- navbarPage(
         tabPanel(
           "Design Process", # Title 
           h1(strong("Design Process"), style = "font-family: 'Times New Roman' serif "),
-          p("Our design began with creating a journey map, process map, and empathy map. These helped to inform our decisions and guide the finer design details of our app to ensure usability for our target audience. We followed with wireframes, outlining our goal for the app's general appearance and the types of visualizations we wanted to show. As we moved into the actual development of the app, most of our initial visualization choices changed drastically, and we added more visualizations based on more specific facets of our data.")
+          wellPanel(style = "background-color: #fff; 
+                            border-color: #2c3e50; 
+                            height: auto;
+                            border-width: 2px",
+          p("Our design began with creating a journey map, process map, and empathy map.
+            These helped to inform our decisions and guide the finer design details of our app to ensure usability for our target audience.
+            We followed with wireframes, outlining our goal for the app's general appearance and the types of visualizations we wanted to show.
+            As we moved into the actual development of the app, most of our initial visualization choices changed drastically, 
+            and we added more visualizations based on more specific facets of our data."))
         ),
         
         ## Reflection Panel
