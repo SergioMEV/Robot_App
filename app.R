@@ -54,6 +54,30 @@ ui <- navbarPage(
     ## Intro tab
     tabPanel(
         "Intro",
+        h1(strong("Welcome to the CovidBot Explorer (CBE)!"),
+           style = "text-align:center; font-family: 'Times New Roman', serif"),
+        column(12,
+               p("Our application is meant to be a tool for any user, regardless of education level, to better understand how robots were used in response to the Covid-19 Pandemic.
+        The data used to construct this application is compiled from various news sources that report on the robot's location, purpose, name, and type.",
+                 style= "margin: 40px; margin-top:10px"),
+               img(src = "intro_image.webp", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+               p("A robot introduces itself to patients in Kigali, Rwanda.", style = "margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+               p("With this data, the user can visualize how robots were used across categories, within the compare robot categories tab, across regions, 
+                 within the compare regions tab, and across countries, within the map tab; furthermore, the map adds additional functionality by allowing 
+                 you to see Covid-19 statistics and macroeconomic indicators, and their rankings for each metric, across each country. Since the robot dataset is limited, 
+                 these map options allow you to further scrutinize how the use of robots differed across country wealth and Covid-19 statistics. 
+                 Finally, our application also includes a CovidBot generator. The CovidBot is meant to be a fun and interactive way to visualize differences across countries.
+                 Using this tab, you can select a country, and a robot with styling based on that country's robot usage, population, wealth, and Covid-19 statistics will be outputted. ",
+                 style= "margin: 40px"),
+               img(src = "covid-robots-nurse.jpg", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+               p("Moxi, a robot assistant designed to take some of the burden off nurses, being tested at Medical City Heart Hospital in Dallas, Texas", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+               p("Robots are separated based on type and category. The possible types are Unmanned Aerial System, Unmanned Ground Vehicle, and Unmanned Surface Vehicle, 
+                 separating different robots based on how they move. The possible categories are public safety,
+                 clinical health, continuity of work and education, quality of life, lab and supply chain automation, 
+                 and non-hospital care, describing how the robots are used.",
+                 style= "margin: 40px")
+        ),
+               
     ),
     ## Map Panel
     tabPanel(
@@ -282,17 +306,53 @@ ui <- navbarPage(
         
         ## Takeaways Panel
         tabPanel(
-          "Takeaways", # Title  
+          "Takeaways", # Title 
+          h1(strong("Takeaways"), style = "font-family: 'Times New Roman' serif "),
+          wellPanel(style ="background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: auto;
+                                border-width: 2px",
+              p("Our application paints a clearer picture of how robots were used in response to Covid-19. 
+              The country with the most robots in our dataset was the United States.
+              Most of these robots were used for the continuity of work and education, with the highest proportion of robots 
+              in this category used to sanitize locations within school and work locations."),
+              p("Furthermore, our data visualization shows evidence that Asia has more public safety-related covid robots than North America.
+                In particular, Asian countries led in the number of covid robots in the fields of disinfecting public space and quarantine enforcement. 
+                On the other hand, North America has more covid robots in Labs and Supply Chain Automation."),
+              img(src = "takeaways1.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+              p("Screenshot of the Regions tab in our app.", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+              img(src = "takeaways2.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+              p("Screenshot of the Regions tab in our app.", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+              p("Our map visualization shows evidence that richer nations (as measured by gross domestic product, or GDP, per capita) had a higher quantity of robots than their poorer counterparts."),
+              img(src = "takeaways3.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+              p("Screenshot of the Map tab in our app.", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+              img(src = "takeaways4.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+              p("Screenshot of the Map tab in our app.", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+              p("This finding is not very surprising, however. These were our main takeaways from the application. We encourage you to explore the rest of the application and see what type of visualizations you can make!")
+          )
         ),
         
         ## Design Process Panel
         tabPanel(
-          "Design Process", # Title  
+          "Design Process", # Title 
+          h1(strong("Design Process"), style = "font-family: 'Times New Roman' serif "),
+          p("Our design began with creating a journey map, process map, and empathy map. These helped to inform our decisions and guide the finer design details of our app to ensure usability for our target audience. We followed with wireframes, outlining our goal for the app's general appearance and the types of visualizations we wanted to show. As we moved into the actual development of the app, most of our initial visualization choices changed drastically, and we added more visualizations based on more specific facets of our data.")
         ),
         
         ## Reflection Panel
         tabPanel(
             "Reflections", # Title
+            h1(strong("Reflections"), style = "font-family: 'Times New Roman' serif "),
+            wellPanel(style ="background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: auto;
+                                border-width: 2px",
+                      p(" Overall, this project was enjoyable and taught us essential skills in data visualization and analysis.
+                        Though we did not find any incredibly surprising results, our findings were both interesting and intuitive. While designing our application, we learned and applied essential skills in both R and RShiny. 
+                        Our project contained a lot of data wrangling. To create our map and covidBot creator tabs, we had to compile and clean data from the Worldbank database and urworldindata.com.
+                        These data were joined with an altered robot 'master' dataset to create a more comprehensive dataframe; furthermore, we had to apply additional manipulations to get the dataset in the correct format for the leaflet map package."),
+                      p("Our robots & regions tab utilized another dataset that also included the data wrangling process. This portion of the app gained inspiration from various categorical visualization techniques, many of which were new to us. These visualizations that we learned and applied include waffle charts, dynamic word-clouds, spider-charts, and standard bar graphs."),
+                      p("Finally, our application included learning many aspects of RShiny application front-end development. We really wanted a product that was easy to use and aesthetically pleasing. Overall, our application was the culmination of many techniques, new and old, brought together. Our utilization of divide and conquer also allowed the whole team the opportunity to 1) have more creative freedom for what they contribute and 2) come together and create an app with multi-faceted functionality."))
         ),
         
         ## Acknowledgements
