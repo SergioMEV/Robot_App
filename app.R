@@ -334,7 +334,18 @@ ui <- navbarPage(
             These helped to inform our decisions and guide the finer design details of our app to ensure usability for our target audience.
             We followed with wireframes, outlining our goal for the app's general appearance and the types of visualizations we wanted to show.
             As we moved into the actual development of the app, most of our initial visualization choices changed drastically, 
-            and we added more visualizations based on more specific facets of our data."))
+            and we added more visualizations based on more specific facets of our data."),
+          img(src = "process_map.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+          p("Map of our development process", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+          img(src = "empathy_map.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+          p("Empathy map of our desired user", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+          img(src = "wireframe_1.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+          p("Wireframe of the Robots tab", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+          img(src = "wireframe_2.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+          p("Wireframe of the About tab", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+          img(src = "wireframe_3.png", height = "60%", width = "60%", style = 'display:block;margin-right:30%; margin-left:30%; width:40%; margin-top: 25px; margin-bottom:2px'),
+          p("Wireframe of the Map tab", style = "margin-right:30%; margin-left:30%;margin-bot:25px; font-family: 'Times New Roman' serif; font-size:12px; text-align: center"),
+          )
         ),
         
         ## Reflection Panel
@@ -356,9 +367,17 @@ ui <- navbarPage(
         ## Acknowledgements
         tabPanel(
             "Acknowledgements", # Title
-            mainPanel(
-            p("Professor Fernanda Eliott"),
-            p("Class Mentor: Alex Leach"),
+            h1(strong("Acknowledgements"), style = "font-family: 'Times New Roman' serif"),
+            wellPanel(style ="background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: auto;
+                                border-width: 2px",
+            h2(strong("Our Professor")),
+            p("We would like to thank Professor Eliott with helping us throughout the entire development process, and referring us to many resources."),
+            h2(strong("Our Alumni Mentor")),
+            p("We would like to thank Alex Leach for giving us honest feedback and areas for improvement within our application, as well as his support throughout the design process."),
+            h2(strong("Everyone in the Class")),
+            p("Finally, we would like to thank our software development classmates who gave us constructive feedback on our data visualizations. ")
             )
             
         )
