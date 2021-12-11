@@ -5,10 +5,10 @@ account: martelos
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5171761
-bundleId: 5336107
+bundleId: 5356951
 url: https://martelos.shinyapps.io/Round_2_App/
-when: 1638824301.77082
-lastSyncTime: 1638824301.77082
+when: 1639165804.51511
+lastSyncTime: 1639165804.51511
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .gitattributes|draft.R
+ignoredFiles: .gitattributes|draft.R|Shiny_Project_Sergio_Martelo.zip

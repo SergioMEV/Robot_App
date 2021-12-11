@@ -378,11 +378,54 @@ ui <- navbarPage(
             p("We would like to thank Alex Leach for giving us honest feedback and areas for improvement within our application, as well as his support throughout the design process."),
             h2(strong("Everyone in the Class")),
             p("Finally, we would like to thank our software development classmates who gave us constructive feedback on our data visualizations. ")
+            ),
+            h1(strong("Data"), style = "font-family: 'Times New Roman' serif"),
+            wellPanel(style ="background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: auto;
+                                border-width: 2px",
+                      h2(strong("Robot Data")),
+                      p('Murphy, Robin; Gandudi, Vignesh Babu Manjunath; Trisha Amin, 2021,"Actual Use of Robots for COVID-19 response", https://doi.org/10.18738/T8/SR6HE0, Texas Data Repository, V6.'),
+                      h2(strong("Covid-19 Data")),
+                      p('https://ourworldindata.org/coronavirus-source-data'),
+                      h2(strong("Macroeconomic Data")),
+                      p("https://www.worldbank.org/en/home"),
+                      h2(strong("Robot Vector Inspiration")),
+                      p('https://www.dreamstime.com/stock-illustration-vector-cartoon-flat-medical-robot-nurse-illustration-isolated-drugs-syringe-future-medicine-icon-artificial-image84325240')
+            ),
+            h1(strong("Packages"), style = "font-family: 'Times New Roman' serif"),
+            wellPanel(style ="background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: auto;
+                                border-width: 2px",
+                "library(shiny)- Shiny aesthetics", br(),
+                "library(tidyverse) - data manipulation", br(),
+                "library(shinyWidgets)- Shiny aesthetics", br(),
+                "library(shinythemes) - Shiny aesthetics", br(),
+                "library(eply) - data manipulation", br(),
+                "library(readxl) - data retrieval", br(),
+                "library(htmltools)  - data retrieval", br(),
+                "library(wordcloud2) - data visualizations", br(),
+                "library(waffle) - data visualizations", br(),
+                "library(fmsb) - data visualizations", br(),
+                "library(slickR) - shiny aesthetics", br(),
+                "library(rsconnect) - shiny requirement", br(),
+                "library(sp) - data visualizations", br(),
+                "library(leaflet) - data visualizations", br(),
+                "library(geojsonio) - data retrieval", br(),
+                "library(magick) - data visualization"
+            ),
+            h2(strong("Images"), style = "font-family: 'Times New Roman' serif"),
+            wellPanel(style = "background-color: #fff; 
+                                border-color: #2c3e50; 
+                                height: auto;
+                                border-width: 2px",
+                strong('Intro image 1:'), p('https://www.npr.org/sections/goatsandsoda/2020/07/15/889802561/a-covid-19-success-story-in-rwanda-free-testing-robot-caregivers'),
+                strong('Intro image 2:'), p('https://www.nationalgeographic.com/science/article/how-pandemic-is-good-for-robots'),
+                strong('Rest of the images are clickable for links.'))
             )
             
         )
-        
-    )
 )
 
 # Define server logic required to draw a histogram  
