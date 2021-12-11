@@ -814,9 +814,9 @@ server <- function(input, output) {
     
     # Base image of robot and money bag are not reactive so are read here with
     # some basic modifications
-    robot <- image_read("RobotImage.png") %>%
+    robot <- image_read("data/RobotImage.png") %>%
         image_trim()
-    money <- image_read("MoneyBag.png") %>%
+    money <- image_read("data/MoneyBag.png") %>%
         image_trim() %>%
         image_fill("none", point = "+0+0", fuzz = 0) %>%
         image_fill("none", point = "+300+0", fuzz = 0) %>%
